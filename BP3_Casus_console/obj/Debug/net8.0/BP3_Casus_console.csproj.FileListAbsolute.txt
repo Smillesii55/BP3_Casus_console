@@ -1,0 +1,14 @@
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\bin\Debug\net8.0\BP3_Casus_console.exe
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\bin\Debug\net8.0\BP3_Casus_console.deps.json
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\bin\Debug\net8.0\BP3_Casus_console.runtimeconfig.json
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\bin\Debug\net8.0\BP3_Casus_console.dll
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\bin\Debug\net8.0\BP3_Casus_console.pdb
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\obj\Debug\net8.0\BP3_Casus_console.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\obj\Debug\net8.0\BP3_Casus_console.AssemblyInfoInputs.cache
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\obj\Debug\net8.0\BP3_Casus_console.AssemblyInfo.cs
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\obj\Debug\net8.0\BP3_Casus_console.csproj.CoreCompileInputs.cache
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\obj\Debug\net8.0\BP3_Casus_console.dll
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\obj\Debug\net8.0\refint\BP3_Casus_console.dll
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\obj\Debug\net8.0\BP3_Casus_console.pdb
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\obj\Debug\net8.0\BP3_Casus_console.genruntimeconfig.cache
+C:\Users\bartl\OneDrive\School\C#Projects\BP3_Casus_console\BP3_Casus_console\obj\Debug\net8.0\ref\BP3_Casus_console.dll

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BP3_Casus_console", "BP3_Casus_console\BP3_Casus_console.csproj", "{F567EC6D-EE6B-4DA3-BC51-A5C42D14157A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F567EC6D-EE6B-4DA3-BC51-A5C42D14157A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F567EC6D-EE6B-4DA3-BC51-A5C42D14157A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F567EC6D-EE6B-4DA3-BC51-A5C42D14157A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F567EC6D-EE6B-4DA3-BC51-A5C42D14157A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4D681755-5BFD-427C-903F-400776F3B27E}
+	EndGlobalSection
+EndGlobal
