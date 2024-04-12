@@ -11,7 +11,7 @@ namespace BP3_Casus_console.Users.Service
         UserDataAccesLayer userDataAccesLayer = UserDataAccesLayer.Instance;
         private UserService()
         {
-            // hallo dit is een test.
+
         }
 
         private static UserService? instance = null;
