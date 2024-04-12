@@ -120,7 +120,6 @@ namespace BP3_Casus_console.Events.Service
                 connection.Open();
                 using (SqlCommand command = new SqlCommand("INSERT INTO EventProgresses (ID, EventId, Level, Experience) VALUES (@ID, @EventId, @Level, @Experience)", connection))
                 {
-                    command.Parameters.AddWithValue("@ID", progress.UserID);
                     command.Parameters.AddWithValue("@EventId", progress.EventID);
                     command.Parameters.AddWithValue("@Level", progress.Level);
                     command.Parameters.AddWithValue("@Experience", progress.Experience);
@@ -162,7 +161,6 @@ namespace BP3_Casus_console.Events.Service
                 {
                     command.Parameters.AddWithValue("@Level", progress.Level);
                     command.Parameters.AddWithValue("@Experience", progress.Experience);
-                    command.Parameters.AddWithValue("@EventProgressId", progress.EventProgressID);
                     command.ExecuteNonQuery();
                 }
             }
@@ -223,7 +221,7 @@ namespace BP3_Casus_console.Events.Service
                     {
                         if (reader.Read())
                         {
-                            return new Event(reader.GetInt32(0), reader.GetString(1), reader.GetFloat(2));
+                            // create and return the event
                         }
                     }
                 }
@@ -245,7 +243,7 @@ namespace BP3_Casus_console.Events.Service
                     {
                         while (reader.Read())
                         {
-                            events.Add(new Event(reader.GetInt32(0), reader.GetString(1), reader.GetFloat(2)));
+                            // add to the list of events
                         }
                     }
                 }
@@ -266,7 +264,7 @@ namespace BP3_Casus_console.Events.Service
                     {
                         if (reader.Read())
                         {
-                            return new EventProgress(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetFloat(3));
+                            // create and return the event progress
                         }
                     }
                 }

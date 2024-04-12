@@ -30,7 +30,19 @@ namespace BP3_Casus_console.Users
 
         public double ExperienceNeededForGeneralLevel(int level)
         {
-            return 100 * level; // Adjust the formula as needed for general progression
+            // Baseline experience (30 XP)
+            int baselineXP = 30;
+
+            // Increment for the first three levels (3 XP each)
+            int incrementalXP = 3 * (level - 1);
+
+            // Exponential growth starting from level 4
+            int exponentialXP = 10 * (int)Math.Pow(2, level - 4);
+
+            // Total max XP for the given level
+            int maxXP = baselineXP + incrementalXP + exponentialXP;
+
+            return maxXP;
         }
 
         public void ParticipateInEvent(Event @event)
@@ -38,11 +50,9 @@ namespace BP3_Casus_console.Users
             EventProgress? progress = EventProgresses.FirstOrDefault(p => p.EventID == @event.ID);
             if (progress == null)
             {
-                progress = new EventProgress(@event.ID);
+                progress = new EventProgress(@event.ID, this.ID);
                 EventProgresses.Add(progress);
             }
-
-            progress.GainExperience(@event.ExpPerParticipant);
         }
     }
 }

@@ -25,10 +25,5 @@ namespace BP3_Casus_console.Events.Service
             }
         }
 
-        public List<Event> GetEvents()
-        {
-            // Get all events
-            return new List<Event>();
-        }
     }
 }
