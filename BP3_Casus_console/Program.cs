@@ -25,7 +25,6 @@ User Login()
             Console.WriteLine();
             Console.Write("Username: ");
             string username = Console.ReadLine();
-
             string password = "";
             Console.Write("Enter your password: ");
             ConsoleKeyInfo key;
@@ -134,21 +133,19 @@ void ViewProfile()
 void EditProfile()
 {
     UserService userService = UserService.Instance;
-    User updatedProfile = new Participant(CurrentUser.Username, CurrentUser.Password, CurrentUser.Email, CurrentUser.FirstName, CurrentUser.LastName, CurrentUser.DateOfBirth);
-
     Console.Clear();
     Console.WriteLine("Edit profile");
     Console.WriteLine();
     Console.Write("Email: ");
-    updatedProfile.Email = Console.ReadLine();
+    CurrentUser.Email = Console.ReadLine();
     Console.Write("First name: ");
-    updatedProfile.FirstName = Console.ReadLine();
+    CurrentUser.FirstName = Console.ReadLine();
     Console.Write("Last name: ");
-    updatedProfile.LastName = Console.ReadLine();
+    CurrentUser.LastName = Console.ReadLine();
     Console.Write("Date of birth (yyyy-MM-dd): ");
-    updatedProfile.DateOfBirth = DateTime.Parse(Console.ReadLine());
+    CurrentUser.DateOfBirth = DateTime.Parse(Console.ReadLine());
 
-    userService.UpdateUserProfile(CurrentUser.ID, updatedProfile);
+    userService.UpdateUserProfile(CurrentUser);
 
     Console.WriteLine();
     Console.WriteLine("Profile updated. Press any key to return.");
@@ -252,7 +249,7 @@ void RemoveFriend()
 void ViewEvents()
 {
     EventService eventService = EventService.Instance;
-    List<Event> events = eventService.GetEvents();
+    List<Event>? events = eventService.GetEvents();
 
     Console.Clear();
     Console.WriteLine("Events");

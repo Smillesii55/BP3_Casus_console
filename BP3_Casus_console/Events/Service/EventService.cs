@@ -25,5 +25,9 @@ namespace BP3_Casus_console.Events.Service
             }
         }
 
+        public List<Event>? GetEvents()
+        {
+            return null;
+        }
     }
 }
