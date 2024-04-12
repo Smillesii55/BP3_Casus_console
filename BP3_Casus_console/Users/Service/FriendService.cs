@@ -111,8 +111,5 @@ namespace BP3_Casus_console.Users.Service
                     }
                 }
                 return friends; */
-            }
-        }
     }
-}
 }
