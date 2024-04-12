@@ -155,26 +155,17 @@ namespace BP3_Casus_console.Events.Service
 
         public void UpdateEventProgress(EventProgress progress)
         {
-            /*
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                // do this where the event id and the user id are the same
-                using (SqlCommand command = new SqlCommand("UPDATE EventProgresses SET Level = @Level, Experience = @Experience WHERE EventId = @EventId AND UserId = @UserId", connection))
-                {
-                    command.Parameters.AddWithValue("@ID", progress.UserID);
-                    command.Parameters.AddWithValue("@EventId", progress.EventID);
-                    command.Parameters.AddWithValue("@Level", progress.Level);
-                    command.Parameters.AddWithValue("@Experience", progress.Experience);
-                    command.ExecuteNonQuery();
-                }
+                using (SqlCommand command = new SqlCommand("UPDATE EventProgresses SET Level = @Level, Experience = @Experience WHERE EventProgressId = @EventProgressId", connection))
                 {
                     command.Parameters.AddWithValue("@Level", progress.Level);
                     command.Parameters.AddWithValue("@Experience", progress.Experience);
+                    command.Parameters.AddWithValue("@EventProgressId", progress.EventProgressID);
                     command.ExecuteNonQuery();
                 }
             }
-            */
         }
 
 
@@ -222,20 +213,64 @@ namespace BP3_Casus_console.Events.Service
 
         public Event? GetEventById(int eventId)
         {
-            // Retrieve event from the database by ID
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Id = @Id", connection))
+                {
+                    command.Parameters.AddWithValue("@Id", eventId);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Event(reader.GetInt32(0), reader.GetString(1), reader.GetFloat(2));
+                        }
+                    }
+                }
+            }
             return null;
         }
 
 
         public List<Event>? GetEventsByTag(string tag)
         {
-            // Retrieve events from the database by tag
-            return null;
+            List<Event> events = new List<Event>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Id IN (SELECT EventId FROM EventTags WHERE Tag = @Tag)", connection))
+                {
+                    command.Parameters.AddWithValue("@Tag", tag);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            events.Add(new Event(reader.GetInt32(0), reader.GetString(1), reader.GetFloat(2)));
+                        }
+                    }
+                }
+            }
+            return events;
         }
 
         public EventProgress? GetEventProgress(int userId, int eventId)
         {
-            // Retrieve event progress from the database by user ID and event ID
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM EventProgresses WHERE ID = @ID AND EventId = @EventId", connection))
+                {
+                    command.Parameters.AddWithValue("@ID", userId);
+                    command.Parameters.AddWithValue("@EventId", eventId);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new EventProgress(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetFloat(3));
+                        }
+                    }
+                }
+            }
             return null;
         }
     }
