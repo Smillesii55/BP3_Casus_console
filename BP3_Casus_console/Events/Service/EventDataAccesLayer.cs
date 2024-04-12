@@ -60,7 +60,7 @@ namespace BP3_Casus_console.Events.Service
 
         private string connectionString = "Server=.;Database=CashRegisterSystem;Trusted_Connection=True;";
 
-        public EventDataAccesLayer()
+        private EventDataAccesLayer()
         {
         }
 

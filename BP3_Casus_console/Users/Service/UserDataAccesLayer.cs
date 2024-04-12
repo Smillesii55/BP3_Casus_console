@@ -94,7 +94,7 @@ namespace BP3_Casus_console.Users.Service
 
         private string connectionString = "Server=.;Database=CashRegisterSystem;Trusted_Connection=True;";
 
-        public UserDataAccesLayer()
+        private UserDataAccesLayer()
         {
         }
 
