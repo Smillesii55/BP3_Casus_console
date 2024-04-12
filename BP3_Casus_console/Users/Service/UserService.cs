@@ -9,7 +9,7 @@ namespace BP3_Casus_console.Users.Service
     public class UserService
     {
         UserDataAccesLayer userDataAccesLayer = UserDataAccesLayer.Instance;
-        public UserService()
+        private UserService()
         {
         }
 

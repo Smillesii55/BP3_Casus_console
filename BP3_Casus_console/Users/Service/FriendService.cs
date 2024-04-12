@@ -9,7 +9,7 @@ namespace BP3_Casus_console.Users.Service
 {
     public class FriendService
     {
-        public FriendService()
+        private FriendService()
         {
         }
 

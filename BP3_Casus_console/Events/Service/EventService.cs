@@ -9,6 +9,9 @@ namespace BP3_Casus_console.Events.Service
 {
     public class EventService
     {
+        private EventService()
+        {
+        }
         private static EventService? instance = null;
         public static EventService Instance
         {
