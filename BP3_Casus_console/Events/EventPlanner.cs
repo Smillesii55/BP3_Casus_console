@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BP3_Casus_console.Users;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,14 +12,15 @@ namespace BP3_Casus_console.Events
         public int EventID { get; set; }
         public DateTime Date { get; set; }
         public decimal Time { get; set; }
+        public Coach Coach { get; set; }
         public string NameCoach { get; set; }
 
-        public EventPlanner(int eventID, DateTime date, decimal time, string nameCoach)
+        public EventPlanner(int eventID, DateTime date, decimal time, Coach Coach)
         {
             EventID = eventID;
             Date = date;
             Time = time;
-            NameCoach = nameCoach;
+            NameCoach = Coach.FirstName + " " + Coach.LastName;
         }
     }
 }

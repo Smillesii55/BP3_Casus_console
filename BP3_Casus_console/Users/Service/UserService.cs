@@ -40,28 +40,43 @@ namespace BP3_Casus_console.Users.Service
             return coach;
         }
 
-        public void UpdateUserProfile(int userId, User updatedProfile)
+        public void UpdateUserProfile(User updatedProfile)
         {
-            // Retrieve the user from the database
-            // Update the user's profile with the updatedProfile information
-            // Save changes to the database
+            userDataAccesLayer.UpdateUser(updatedProfile);
         }
 
-        public void DeleteUserProfile(int userId)
+        public void DeleteUserProfile(User userToDelete)
         {
-            // Retrieve the user from the database
-            // Delete the user from the database
+            userDataAccesLayer.DeleteUser(userToDelete);
         }
 
         public User GetUserProfileById(int userId)
         {
-            // Retrieve the user from the database
-            return new Participant("username", "password", "email", "firstName", "lastName", DateTime.Now); // Placeholder
+            User? user = userDataAccesLayer.GetUserById(userId);
+            if (user != null)
+            {
+                return user;
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("User not found.");
+                return null;
+            }
         }
         public User GetUserProdileByUsername(string username)
         {
-            // Retrieve the user from the database
-            return new Participant("username", "password", "email", "firstName", "lastName", DateTime.Now); // Placeholder
+            User? user = userDataAccesLayer.GetUserByUsername(username);
+            if (user != null)
+            {
+                return user;
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("User not found.");
+                return null;
+            }
         }
 
         public User Login(string username, string password)
