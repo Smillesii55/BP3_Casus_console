@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using BP3_Casus_console.Users.Friends;
 
 namespace BP3_Casus_console.Users.Service
 {
@@ -353,6 +354,25 @@ namespace BP3_Casus_console.Users.Service
             }
 
             return null;
+        }
+
+        public void UpdateStatus(int requestId, FriendRequest newStatus)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "UPDATE ? SET newStatus = @Status WHERE RequestId = @RequestId";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@RequestId", requestId);
+                    command.Parameters.AddWithValue("@Status", newStatus);
+
+                    command.ExecuteNonQuery();
+                }
+ 
+            }       
         }
     }
 }
