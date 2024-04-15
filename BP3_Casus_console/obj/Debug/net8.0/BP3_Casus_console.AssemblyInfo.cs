@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BP3_Casus_console")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f09480a67269c8ae30577d6351076e3f862c6d41")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a7084b65135cc9ef943ae47f1da8773765adc2df")]
 [assembly: System.Reflection.AssemblyProductAttribute("BP3_Casus_console")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BP3_Casus_console")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

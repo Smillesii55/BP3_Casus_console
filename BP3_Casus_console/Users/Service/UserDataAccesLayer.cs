@@ -93,7 +93,7 @@ namespace BP3_Casus_console.Users.Service
         WHERE Username = 'marcelluswallace';
         */
 
-        private string connectionString = "Server=.;Database=CashRegisterSystem;Trusted_Connection=True;";
+        private string connectionString = "Server=.;Database=BP3Casus;Trusted_Connection=True;";
 
         private UserDataAccesLayer()
         {
@@ -270,13 +270,13 @@ namespace BP3_Casus_console.Users.Service
                     {
                         if (reader.Read())
                         {
-                            int userId = reader.GetInt32(reader.GetOrdinal("UserID"));
-                            string password = reader.GetString(reader.GetOrdinal("Password"));
-                            string email = reader.GetString(reader.GetOrdinal("Email"));
-                            string firstName = reader.GetString(reader.GetOrdinal("FirstName"));
-                            string lastName = reader.GetString(reader.GetOrdinal("LastName"));
-                            DateTime dateOfBirth = reader.GetDateTime(reader.GetOrdinal("DateOfBirth"));
-                            User.UserType userType = (User.UserType)Enum.Parse(typeof(User.UserType), reader.GetString(reader.GetOrdinal("UserType")));
+                            int userId = reader.GetInt32(0);
+                            string password = reader.GetString(2);
+                            string email = reader.GetString(3);
+                            string firstName = reader.GetString(4);
+                            string lastName = reader.GetString(5);
+                            DateTime dateOfBirth = reader.GetDateTime(6);
+                            User.UserType userType = (User.UserType)Enum.Parse(typeof(User.UserType), reader.GetString(7));
 
                             if (userType == User.UserType.Participant)
                             {
@@ -311,23 +311,24 @@ namespace BP3_Casus_console.Users.Service
             {
                 connection.Open();
 
+                //string query = "SELECT * FROM Users WHERE Username = 'sgreen_nutrition' AND Password = 'pass456Secure'";
                 string query = "SELECT * FROM Users WHERE Username = @Username AND Password = @Password";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Username", username);
                     command.Parameters.AddWithValue("@Password", password);
-
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            int userId = reader.GetInt32(reader.GetOrdinal("UserID"));
-                            string email = reader.GetString(reader.GetOrdinal("Email"));
-                            string firstName = reader.GetString(reader.GetOrdinal("FirstName"));
-                            string lastName = reader.GetString(reader.GetOrdinal("LastName"));
-                            DateTime dateOfBirth = reader.GetDateTime(reader.GetOrdinal("DateOfBirth"));
-                            User.UserType userType = (User.UserType)Enum.Parse(typeof(User.UserType), reader.GetString(reader.GetOrdinal("UserType")));
+                            int userId = reader.GetInt32(0);
+                            string email = reader.GetString(3);
+                            string firstName = reader.GetString(4);
+                            string lastName = reader.GetString(5);
+                            DateTime dateOfBirth = reader.GetDateTime(6);
+                            Console.WriteLine(reader.GetString(7));
+                            User.UserType userType = (User.UserType)Enum.Parse(typeof(User.UserType), reader.GetString(7));
 
                             if (userType == User.UserType.Participant)
                             {
@@ -362,14 +363,14 @@ namespace BP3_Casus_console.Users.Service
             {
                 connection.Open();
 
-                string query = "INSERT INTO FriendRequests (SenderUserId, ReceiverUserId, RequestDate, Status) VALUES (@SenderUserId, @ReceiverUserId, @RequestDate, @Status)";
+                string query = "INSERT INTO FriendRequests (SenderUserID, RecieverUserID, RequestDate, Status) VALUES (@SenderUserID, @RecieverUserID, @RequestDate, @Status)";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@SenderUserId", request.SenderUserId);
-                    command.Parameters.AddWithValue("@ReceiverUserId", request.ReceiverUserId);
-                    command.Parameters.AddWithValue("@RequestDate", request.RequestDate);
-                    command.Parameters.AddWithValue("@Status", request.Status.ToString());
+                    command.Parameters.AddWithValue("@SenderUserID", friendRequest.SenderUserId);
+                    command.Parameters.AddWithValue("@RecieverUserID", friendRequest.ReceiverUserId);
+                    command.Parameters.AddWithValue("@RequestDate", friendRequest.RequestDate);
+                    command.Parameters.AddWithValue("@Status", friendRequest.Status.ToString());
 
                     command.ExecuteNonQuery();
                 }
@@ -386,8 +387,8 @@ namespace BP3_Casus_console.Users.Service
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@RequestId", request.RequestId);
-                    command.Parameters.AddWithValue("@Status", request.Status.ToString());
+                    command.Parameters.AddWithValue("@RequestId", friendRequest.RequestId);
+                    command.Parameters.AddWithValue("@Status", friendRequest.Status.ToString());
 
                     command.ExecuteNonQuery();
                 }

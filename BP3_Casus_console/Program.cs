@@ -25,30 +25,10 @@ User Login()
             Console.WriteLine();
             Console.Write("Username: ");
             string username = Console.ReadLine();
-            string password = "";
-            Console.Write("Enter your password: ");
-            ConsoleKeyInfo key;
-
-            do
-            {
-                key = Console.ReadKey(true);
-
-                // Backspace Should Not Work
-                if (key.Key != ConsoleKey.Backspace)
-                {
-                    password += key.KeyChar;
-                    Console.Write("*");
-                }
-                else
-                {
-                    Console.Write("\b");
-                }
-            }
-            // Stops Receving Keys Once Enter is Pressed
-            while (key.Key != ConsoleKey.Enter);
-
-            //loggedInUser = userService.Login(username, password);
-            loggedInUser = new User("username", "password", "email", "firstName", "lastName", DateTime.Now); // Placeholder
+            
+            Console.Write("password: ");
+            string password = Console.ReadLine();
+            loggedInUser = userService.Login(username, password);
 
             if (loggedInUser == null)
             {
@@ -61,6 +41,7 @@ User Login()
 
     return loggedInUser;
 }
+
 while (true)
 {
     Console.Clear();
@@ -249,12 +230,12 @@ void RemoveFriend()
 void ViewEvents()
 {
     EventService eventService = EventService.Instance;
-    List<Event>? events = eventService.GetEvents();
+    //List<Event>? events = eventService.GetEvents();
 
     Console.Clear();
     Console.WriteLine("Events");
     Console.WriteLine();
-
+    /*
     if (events.Count == 0)
     {
         Console.WriteLine("There are no events.");
@@ -266,6 +247,7 @@ void ViewEvents()
             Console.WriteLine(@event.Name);
         }
     }
+    */
 
     Console.WriteLine();
     Console.WriteLine("Press any key to return.");
@@ -281,7 +263,7 @@ void ParticipateInEvent()
     Console.WriteLine();
     Console.Write("Enter the name of the event you want to participate in: ");
     string eventName = Console.ReadLine();
-
+    /*
     Event? @event = eventService.GetEvents().FirstOrDefault(e => e.Name == eventName);
 
     if (@event == null)
@@ -298,4 +280,5 @@ void ParticipateInEvent()
     Console.WriteLine();
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
+    */
 }
