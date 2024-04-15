@@ -4,6 +4,8 @@ using BP3_Casus_console.Users;
 using BP3_Casus_console.Users.Friends;
 using BP3_Casus_console.Users.Service;
 using System.Text;
+using BP3_Casus_console.Quiz.Service;
+using BP3_Casus_console.Quiz;
 
 UserService userService = UserService.Instance;
 FriendService friendService = FriendService.Instance;
@@ -54,7 +56,8 @@ while (true)
     Console.WriteLine("5. Remove friend");
     Console.WriteLine("6. View events");
     Console.WriteLine("7. Participate in event");
-    Console.WriteLine("8. Exit");
+    Console.WriteLine("8. Get prefered events");
+    Console.WriteLine("9. Exit");
     Console.WriteLine();
     Console.Write("Select an option: ");
     string input = Console.ReadLine();
@@ -83,6 +86,9 @@ while (true)
             ParticipateInEvent();
             break;
         case "8":
+            GetPreferedEvents();
+            break;
+        case "9":
             return;
         default:
             Console.WriteLine("Invalid input. Press any key to try again.");
@@ -281,4 +287,33 @@ void ParticipateInEvent()
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
     */
+}
+
+void GetPreferedEvents()
+{
+    QuizService quizService = QuizService.Instance;
+
+    Console.Clear();
+    Console.WriteLine("Prefered events");
+    Console.WriteLine();
+    
+    // Get quiz questions
+    List<QuizQuestion> questions = quizService.GetQuestions();
+
+    // ask quiz questions
+    List<string> answers = new List<string>();
+    foreach (QuizQuestion question in questions)
+    {
+        Console.WriteLine(question.Question);
+        Console.WriteLine();
+        for (int i = 0; i < question.Options.Count; i++)
+        {
+            Console.WriteLine((i + 1) + ". " + question.Options[i]);
+        }
+        Console.WriteLine();
+        Console.Write("Select an option: ");
+        string answer = Console.ReadLine();
+        answers.Add(question.Options[int.Parse(answer) - 1]);
+        Console.WriteLine();
+    }
 }
