@@ -1,4 +1,5 @@
 ﻿using BP3_Casus_console.Events;
+using BP3_Casus_console.Events.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace BP3_Casus_console.Users
         public int GeneralLevel { get; set; } = 1;
         public double GeneralExperience { get; set; } = 0;
         public List<EventProgress> EventProgresses { get; set; } = new List<EventProgress>();
+
+        EventService EventService = EventService.Instance;
 
         public Participant(string username, string password, string email, string firstName, string lastName, DateTime dateOfBirth) : base(username, password, email, firstName, lastName, dateOfBirth)
         {

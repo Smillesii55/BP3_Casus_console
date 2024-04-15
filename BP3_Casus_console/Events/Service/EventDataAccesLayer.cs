@@ -58,7 +58,7 @@ namespace BP3_Casus_console.Events.Service
         VALUES (3, 2, 1, 10.0);
         */
 
-        private string connectionString = "Server=.;Database=CashRegisterSystem;Trusted_Connection=True;";
+        private string connectionString = "Server=.;Database=BP3Casus;Trusted_Connection=True;";
 
         private EventDataAccesLayer()
         {
@@ -221,7 +221,9 @@ namespace BP3_Casus_console.Events.Service
                     {
                         if (reader.Read())
                         {
-                            // create and return the event
+                            Event @event = new Event(reader["Name"].ToString(), (double)reader["ExperiencePerParticipation"]);
+                            @event.ID = (int)reader["Id"];
+                            return @event;
                         }
                     }
                 }
@@ -243,7 +245,9 @@ namespace BP3_Casus_console.Events.Service
                     {
                         while (reader.Read())
                         {
-                            // add to the list of events
+                            Event @event = new Event(reader["Name"].ToString(), (double)reader["ExperiencePerParticipation"]);
+                            @event.ID = (int)reader["Id"];
+                            events.Add(@event);
                         }
                     }
                 }
@@ -263,7 +267,9 @@ namespace BP3_Casus_console.Events.Service
                     {
                         if (reader.Read())
                         {
-                            // create and return the event
+                            Event @event = new Event(reader["Name"].ToString(), (double)reader["ExperiencePerParticipation"]);
+                            @event.ID = (int)reader["Id"];
+                            return @event;
                         }
                     }
                 }
@@ -283,7 +289,9 @@ namespace BP3_Casus_console.Events.Service
                     {
                         while (reader.Read())
                         {
-                            // add to the list of events
+                            Event @event = new Event(reader["Name"].ToString(), (double)reader["ExperiencePerParticipation"]);
+                            @event.ID = (int)reader["Id"];
+                            events.Add(@event);
                         }
                     }
                 }
@@ -304,7 +312,10 @@ namespace BP3_Casus_console.Events.Service
                     {
                         if (reader.Read())
                         {
-                            // create and return the event progress
+                            EventProgress progress = new EventProgress((int)reader["EventId"], (int)reader["ID"]);
+                            progress.Level = (int)reader["Level"];
+                            progress.Experience = (double)reader["Experience"];
+                            return progress;
                         }
                     }
                 }

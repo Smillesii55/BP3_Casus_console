@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BP3_Casus_console.Events.Service;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
@@ -14,9 +15,13 @@ namespace BP3_Casus_console.Events
         public int Level { get; set; }
         public double Experience { get; set; } = 0;
 
+        public Event @event { get; set; }
+
+        EventService EventService = EventService.Instance;
         public EventProgress(int eventID, int userID)
         {
             EventID = eventID;
+            @event = EventService.GetEventById(eventID);
             UserID = userID;
         }
 

@@ -87,6 +87,7 @@ User Register()
     User user = userService.CreateUser(username, password, email, firstName, lastName, dateOfBirth);
     return user;
 }
+
 while (true)
 {
     Console.Clear();
@@ -157,6 +158,12 @@ void ViewProfile()
     {
         Console.WriteLine("General level: " + (userProfile as Participant)?.GeneralLevel);
         Console.WriteLine("General experience: " + (userProfile as Participant)?.GeneralExperience);
+        // display all the eventprogresses
+        Console.WriteLine("Event progresses:");
+        foreach (EventProgress progress in (userProfile as Participant)?.EventProgresses)
+        {
+            Console.WriteLine("Event: " + progress.@event.Name + ", Level: " + progress.Level + ", Experience: " + progress.Experience);
+        }
     }
     Console.WriteLine();
     Console.WriteLine("Press any key to return.");
@@ -314,7 +321,6 @@ void ParticipateInEvent()
     Console.WriteLine();
     Console.Write("Enter the name of the event you want to participate in: ");
     string eventName = Console.ReadLine();
-    /*
     Event? @event = eventService.GetEvents().FirstOrDefault(e => e.Name == eventName);
 
     if (@event == null)
@@ -323,13 +329,20 @@ void ParticipateInEvent()
     }
     else
     {
-        Participant participant = (Participant)userService.GetUserProfileById(CurrentUser.ID);
-        participant.ParticipateInEvent(@event);
-        Console.WriteLine("Participation confirmed.");
+        // Check if the current user is a participant
+        if (CurrentUser.Type != User.UserType.Participant)
+        {
+            Console.WriteLine("Only participants can participate in events.");
+        }
+        else
+        {
+            (CurrentUser as Participant)?.ParticipateInEvent(@event);
+            Console.WriteLine("Participation confirmed.");
+        }
     }
 
     Console.WriteLine();
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
-    */
+    
 }
