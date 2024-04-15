@@ -50,11 +50,12 @@ while (true)
     Console.WriteLine("1. View profile");
     Console.WriteLine("2. Edit profile");
     Console.WriteLine("3. View friends");
-    Console.WriteLine("4. Add friend");
-    Console.WriteLine("5. Remove friend");
-    Console.WriteLine("6. View events");
-    Console.WriteLine("7. Participate in event");
-    Console.WriteLine("8. Exit");
+    Console.WriteLine("4. View friend requests");
+    Console.WriteLine("5. Add friend");
+    Console.WriteLine("6. Remove friend");
+    Console.WriteLine("7. View events");
+    Console.WriteLine("8. Participate in event");
+    Console.WriteLine("9. Exit");
     Console.WriteLine();
     Console.Write("Select an option: ");
     string input = Console.ReadLine();
@@ -71,18 +72,21 @@ while (true)
             ViewFriends();
             break;
         case "4":
-            AddFriend();
+            ViewFriendRequest();
             break;
         case "5":
-            RemoveFriend();
+            AddFriend();
             break;
         case "6":
-            ViewEvents();
+            RemoveFriend();
             break;
         case "7":
-            ParticipateInEvent();
+            ViewEvents();
             break;
         case "8":
+            ParticipateInEvent();
+            break;
+        case "9":
             return;
         default:
             Console.WriteLine("Invalid input. Press any key to try again.");
@@ -157,6 +161,16 @@ void ViewFriends()
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
+void ViewFriendRequest()
+{
+    FriendService friendservice = FriendService.Instance;
+    Console.Clear();
+
+    Console.WriteLine("Friendrequest list");
+
+
+    Console.ReadKey();
+}
 void AddFriend()
 {
     FriendService friendService = FriendService.Instance;
@@ -169,6 +183,7 @@ void AddFriend()
     string friendUsername = Console.ReadLine();
 
     User? friend = userService.GetUserProdileByUsername(friendUsername);
+    friendService.GetId(friendUsername);
 
     if (friend == null)
     {
