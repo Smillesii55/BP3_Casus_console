@@ -359,7 +359,7 @@ namespace BP3_Casus_console.Users.Service
 
         public void InsertRequest(FriendRequest friendRequest)
         {
-            List<FriendRequest> friendRequestList = new List<FriendRequest>();
+            //Enkele entiteit aanmaken
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -414,6 +414,28 @@ namespace BP3_Casus_console.Users.Service
                     command.ExecuteNonQuery();
                 }
             }
+        }
+
+        public List <FriendRequest> FriendsList()
+        {
+            List<FriendRequest> friends = new List<FriendRequest>();
+
+            using (SqlConnection connection = new SqlConnection())
+            {
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Id IN (SELECT EventId FROM EventTags WHERE Tag = @Tag)", connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+
+                        }
+                    }
+                }
+            }
+            return friends;
         }
     }
 }
