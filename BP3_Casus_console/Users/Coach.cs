@@ -18,7 +18,8 @@ namespace BP3_Casus_console.Users
             KungFu, 
             Bodytraining, 
             Yoga,
-            Fitness
+            Fitness,
+            Nutrition
         }
 
         public Coach(string username, string password, string email, string firstName, string lastName, DateTime dateOfBirth, AreaOfExpertise expertise) : base(username, password, email, firstName, lastName, dateOfBirth)
