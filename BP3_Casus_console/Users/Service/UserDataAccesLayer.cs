@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using BP3_Casus_console.Users.Friends;
+using BP3_Casus_console.Events;
 
 namespace BP3_Casus_console.Users.Service
 {
@@ -236,6 +237,7 @@ namespace BP3_Casus_console.Users.Service
                                 participant.ID = userId;
                                 participant.GeneralLevel = generalLevel;
                                 participant.GeneralExperience = generalExperience;
+                                GetEventProgressesOfParticipant(participant);
                                 return participant;
                             }
                             else if (userType == User.UserType.Coach)
@@ -287,6 +289,7 @@ namespace BP3_Casus_console.Users.Service
                                 participant.ID = userId;
                                 participant.GeneralLevel = generalLevel;
                                 participant.GeneralExperience = generalExperience;
+                                GetEventProgressesOfParticipant(participant);
                                 return participant;
                             }
                             else if (userType == User.UserType.Coach)
@@ -339,6 +342,7 @@ namespace BP3_Casus_console.Users.Service
                                 participant.ID = userId;
                                 participant.GeneralLevel = generalLevel;
                                 participant.GeneralExperience = generalExperience;
+                                GetEventProgressesOfParticipant(participant);
                                 return participant;
                             }
                             else if (userType == User.UserType.Coach)
@@ -357,7 +361,38 @@ namespace BP3_Casus_console.Users.Service
             return null;
         }
 
-        public void InsertRuest(FriendRequest friendRequest)
+        public void GetEventProgressesOfParticipant(Participant participant)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM EventProgresses WHERE UserId = @UserId";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserId", participant.ID);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int eventId = reader.GetInt32(reader.GetOrdinal("EventId"));
+                            int level = reader.GetInt32(reader.GetOrdinal("Level"));
+                            float experience = (float)reader.GetDouble(reader.GetOrdinal("Experience"));
+
+                            EventProgress eventProgress = new EventProgress(eventId, participant.ID);
+                            eventProgress.Level = level;
+                            eventProgress.Experience = experience;
+
+                            participant.EventProgresses.Add(eventProgress);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void InsertRequest(FriendRequest friendRequest)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

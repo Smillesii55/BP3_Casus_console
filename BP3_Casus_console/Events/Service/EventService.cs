@@ -5,11 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BP3_Casus_console.Events;
+using BP3_Casus_console.Users;
 
 namespace BP3_Casus_console.Events.Service
 {
     public class EventService
     {
+        EventDataAccesLayer eventDataAccesLayer = EventDataAccesLayer.Instance;
+
         private EventService()
         {
         }
@@ -26,9 +29,69 @@ namespace BP3_Casus_console.Events.Service
             }
         }
 
-        public void CreateEvent(Event newEvent)
+        public Event CreateEvent(string name, double expPerParticipant)
         {
-            EventDataAccesLayer.Instance.InsertEvent(newEvent);
+            Event newEvent = new Event(name, expPerParticipant);
+            eventDataAccesLayer.InsertEvent(newEvent);
+            return newEvent;
+        }
+        public void UpdateEvent(Event updatedEvent)
+        {
+            eventDataAccesLayer.UpdateEvent(updatedEvent);
+        }
+        public void DeleteEvent(Event eventToDelete)
+        {
+            eventDataAccesLayer.DeleteEvent(eventToDelete);
+        }
+
+        public Event GetEventById(int eventId)
+        {
+            Event? eventToGet = eventDataAccesLayer.GetEventById(eventId);
+            if (eventToGet != null)
+            {
+                return eventToGet;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public Event GetEventByName(string eventName)
+        {
+            Event? eventToGet = eventDataAccesLayer.GetEventByName(eventName);
+            if (eventToGet != null)
+            {
+                return eventToGet;
+            }
+            else
+            {
+                return null;
+            }
+        } 
+        
+        public List<Event> GetEventsByTag(string tag)
+        {
+            List<Event>? events = eventDataAccesLayer.GetEventsByTag(tag);
+            if (events != null)
+            {
+                return events;
+            }
+            else
+            {
+                return new List<Event>();
+            }
+        }
+        public List<Event> GetEvents()
+        {
+            List<Event>? events = eventDataAccesLayer.GetEvents();
+            if (events != null)
+            {
+                return events;
+            }
+            else
+            {
+                return new List<Event>();
+            }
         }
     }
 }
