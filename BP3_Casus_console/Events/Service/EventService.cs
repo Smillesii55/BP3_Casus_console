@@ -93,5 +93,16 @@ namespace BP3_Casus_console.Events.Service
                 return new List<Event>();
             }
         }
+
+        public void AddTagToEvent(Event @event, string tag)
+        {
+            @event.Tags.Add(tag);
+            UpdateEvent(@event);
+        }
+        public void RemoveTagFromEvent(Event @event, string tag)
+        {
+            @event.Tags.Remove(tag);
+            UpdateEvent(@event);
+        }
     }
 }
