@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using BP3_Casus_console.Users.Friends;
 
 namespace BP3_Casus_console.Users.Service
 {
@@ -353,6 +354,44 @@ namespace BP3_Casus_console.Users.Service
             }
 
             return null;
+        }
+
+        public void InsertRuest(FriendRequest friendRequest)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "INSERT INTO FriendRequests (SenderUserId, ReceiverUserId, RequestDate, Status) VALUES (@SenderUserId, @ReceiverUserId, @RequestDate, @Status)";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@SenderUserId", request.SenderUserId);
+                    command.Parameters.AddWithValue("@ReceiverUserId", request.ReceiverUserId);
+                    command.Parameters.AddWithValue("@RequestDate", request.RequestDate);
+                    command.Parameters.AddWithValue("@Status", request.Status.ToString());
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateRequestStatus(FriendRequest friendRequest)
+        {  
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "UPDATE FriendRequests SET Status = @Status WHERE RequestId = @RequestId";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@RequestId", request.RequestId);
+                    command.Parameters.AddWithValue("@Status", request.Status.ToString());
+
+                    command.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
