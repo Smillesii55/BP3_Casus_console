@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BP3_Casus_console.Events;
 
 namespace BP3_Casus_console.Events.Service
 {
@@ -25,9 +26,9 @@ namespace BP3_Casus_console.Events.Service
             }
         }
 
-        public List<Event>? GetEvents()
+        public void CreateEvent(Event newEvent)
         {
-            return null;
+            EventDataAccesLayer.Instance.InsertEvent(newEvent);
         }
     }
 }
