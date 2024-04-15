@@ -168,14 +168,14 @@ namespace BP3_Casus_console.Events.Service
 
 
 
-        public void DeleteEvent(int eventId)
-        {
+        public void DeleteEvent(Event @event)
+        {             
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand("DELETE FROM Events WHERE Id = @Id", connection))
                 {
-                    command.Parameters.AddWithValue("@Id", eventId);
+                    command.Parameters.AddWithValue("@Id", @event.ID);
                     command.ExecuteNonQuery();
                 }
             }
@@ -239,6 +239,46 @@ namespace BP3_Casus_console.Events.Service
                 using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Id IN (SELECT EventId FROM EventTags WHERE Tag = @Tag)", connection))
                 {
                     command.Parameters.AddWithValue("@Tag", tag);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            // add to the list of events
+                        }
+                    }
+                }
+            }
+            return events;
+        }
+
+        public Event GetEventByName(string eventName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Name = @Name", connection))
+                {
+                    command.Parameters.AddWithValue("@Name", eventName);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            // create and return the event
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public List<Event>? GetEvents()
+        {
+            List<Event> events = new List<Event>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events", connection))
+                {
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())

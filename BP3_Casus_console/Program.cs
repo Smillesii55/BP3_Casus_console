@@ -8,10 +8,34 @@ using System.Text;
 UserService userService = UserService.Instance;
 FriendService friendService = FriendService.Instance;
 
-User CurrentUser = Login();
+// give the user the option to log in or register
+Console.WriteLine("Welcome to the Fitness App!");
+Console.WriteLine();
+Console.WriteLine("1. Log in");
+Console.WriteLine("2. Register");
+Console.WriteLine();
+Console.Write("Select an option: ");
+string loginOrRegister = Console.ReadLine();
+
+User CurrentUser = null;
+
+switch (loginOrRegister)
+{
+    case "1":
+        CurrentUser = Login();
+        break;
+    case "2":
+        CurrentUser = Register();
+        break;
+    default:
+        Console.WriteLine("Invalid input. Press any key to try again.");
+        Console.ReadKey();
+        break;
+}
+
 User Login()
 {
-    
+
     User? loggedInUser = null;
 
     while (loggedInUser == null)
@@ -25,7 +49,7 @@ User Login()
             Console.WriteLine();
             Console.Write("Username: ");
             string username = Console.ReadLine();
-            
+
             Console.Write("password: ");
             string password = Console.ReadLine();
             loggedInUser = userService.Login(username, password);
@@ -42,6 +66,27 @@ User Login()
     return loggedInUser;
 }
 
+User Register()
+{
+    Console.Clear();
+    Console.WriteLine("Register.");
+    Console.WriteLine();
+    Console.Write("Username: ");
+    string username = Console.ReadLine();
+    Console.Write("Password: ");
+    string password = Console.ReadLine();
+    Console.Write("Email: ");
+    string email = Console.ReadLine();
+    Console.Write("First name: ");
+    string firstName = Console.ReadLine();
+    Console.Write("Last name: ");
+    string lastName = Console.ReadLine();
+    Console.Write("Date of birth (yyyy-MM-dd): ");
+    DateTime dateOfBirth = DateTime.Parse(Console.ReadLine());
+
+    User user = userService.CreateUser(username, password, email, firstName, lastName, dateOfBirth);
+    return user;
+}
 while (true)
 {
     Console.Clear();
@@ -104,9 +149,15 @@ void ViewProfile()
     Console.WriteLine("Last name: " + userProfile.LastName);
     Console.WriteLine("Date of birth: " + userProfile.DateOfBirth.ToString("yyyy-MM-dd"));
     Console.WriteLine("User type: " + userProfile.Type);
-    Console.WriteLine("General level: " + (userProfile as Participant)?.GeneralLevel);
-    Console.WriteLine("General experience: " + (userProfile as Participant)?.GeneralExperience);
-    Console.WriteLine("Expertise: " + (userProfile as Coach)?.Expertise);
+    if (userProfile.Type == User.UserType.Coach)
+    {
+        Console.WriteLine("Expertise: " + (userProfile as Coach)?.Expertise);
+    }
+    else if (userProfile.Type == User.UserType.Participant)
+    {
+        Console.WriteLine("General level: " + (userProfile as Participant)?.GeneralLevel);
+        Console.WriteLine("General experience: " + (userProfile as Participant)?.GeneralExperience);
+    }
     Console.WriteLine();
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();

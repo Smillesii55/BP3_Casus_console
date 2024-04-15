@@ -50,7 +50,7 @@ namespace BP3_Casus_console.Users.Service
             userDataAccesLayer.DeleteUser(userToDelete);
         }
 
-        public User GetUserProfileById(int userId)
+        public User? GetUserProfileById(int userId)
         {
             User? user = userDataAccesLayer.GetUserById(userId);
             if (user != null)
@@ -64,7 +64,7 @@ namespace BP3_Casus_console.Users.Service
                 return null;
             }
         }
-        public User GetUserProdileByUsername(string username)
+        public User? GetUserProdileByUsername(string username)
         {
             User? user = userDataAccesLayer.GetUserByUsername(username);
             if (user != null)
@@ -79,7 +79,7 @@ namespace BP3_Casus_console.Users.Service
             }
         }
 
-        public User Login(string username, string password)
+        public User? Login(string username, string password)
         {
             User? user = userDataAccesLayer.GetUserByUserCredentials(username, password);
             if (user != null)
