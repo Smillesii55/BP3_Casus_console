@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using BP3_Casus_console.Users.Friends;
 using static BP3_Casus_console.Users.Friends.FriendRequest;
+using BP3_Casus_console.Events;
 
 namespace BP3_Casus_console.Users.Service
 {
@@ -424,13 +425,15 @@ namespace BP3_Casus_console.Users.Service
             {
                 connection.Open();
 
-                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Id IN (SELECT EventId FROM EventTags WHERE Tag = @Tag)", connection))
+                using (SqlCommand command = new SqlCommand("SELECT SenderID FROM FriendRequests WHERE UserID = @UserID", connection))
                 {
+                    command.Parameters.AddWithValue("@ID", ID);
+
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-
+                            
                         }
                     }
                 }

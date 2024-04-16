@@ -1,4 +1,6 @@
-﻿using BP3_Casus_console.Users.Friends;
+﻿using BP3_Casus_console.Events.Service;
+using BP3_Casus_console.Events;
+using BP3_Casus_console.Users.Friends;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,11 +86,18 @@ namespace BP3_Casus_console.Users.Service
             // Save changes to the database
         }
 
-        public List<User> GetFriendsList(int userId)
+        public List<FriendRequest> GetFriendsList()
         {
-            
-            // Retrieve and return a list of User objects representing the friends of the specified user
-            return new List<User>(); // Placeholder
+
+            List<FriendRequest>? friends = UserDataAccesLayer.FriendsList();
+            if (friends != null)
+            {
+                return friends;
+            }
+            else
+            {
+                return new List<FriendRequest>();
+            }
         }
 
         public void GetId(string username)
