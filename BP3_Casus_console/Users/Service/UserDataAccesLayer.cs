@@ -427,7 +427,7 @@ namespace BP3_Casus_console.Users.Service
 
                 using (SqlCommand command = new SqlCommand("SELECT SenderID FROM FriendRequests WHERE UserID = @UserID", connection))
                 {
-                    command.Parameters.AddWithValue("@ID", ID);
+                    //command.Parameters.AddWithValue("@ID", ID);
 
                     using (SqlDataReader reader = command.ExecuteReader())
                     {

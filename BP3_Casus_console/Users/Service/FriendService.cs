@@ -86,18 +86,11 @@ namespace BP3_Casus_console.Users.Service
             // Save changes to the database
         }
 
-        public List<FriendRequest> GetFriendsList()
+        public List<User> GetFriendsList(int UserId)
         {
 
-            List<FriendRequest>? friends = UserDataAccesLayer.FriendsList();
-            if (friends != null)
-            {
-                return friends;
-            }
-            else
-            {
-                return new List<FriendRequest>();
-            }
+                return new List<User>();
+            
         }
 
         public void GetId(string username)

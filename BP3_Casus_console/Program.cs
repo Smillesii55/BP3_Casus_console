@@ -181,7 +181,7 @@ void AddFriend()
     Console.WriteLine();
     Console.Write("Enter the username of the friend you want to add: ");
     string friendUsername = Console.ReadLine();
-    Event? @event = eventService.GetEvents().FirstOrDefault(e => e.Name == eventName);
+    //Event? @event = eventService.GetEvents().FirstOrDefault(e => e.Name == eventName);
 
     User? friend = userService.GetUserProdileByUsername(friendUsername);
     friendService.GetId(friendUsername);
