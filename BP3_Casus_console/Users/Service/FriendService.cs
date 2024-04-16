@@ -86,10 +86,20 @@ namespace BP3_Casus_console.Users.Service
             // Save changes to the database
         }
 
-        public List<User> GetFriendsList(int UserId)
+        public List<User> GetFriendsList(int userID)
         {
-
-                return new List<User>();
+            List<FriendRequest> friends = UserDataAccesLayer.FriendsList(userID);
+            foreach (FriendRequest friend in friends)
+            {
+                Console.WriteLine("Friend Request Details:");
+                Console.WriteLine("Request ID: " + friend.RequestId);
+                Console.WriteLine("Sender ID: " + friend.SenderUserId);
+                Console.WriteLine("Receiver ID: " + friend.ReceiverUserId);
+                Console.WriteLine("Request Date: " + friend.RequestDate);
+                Console.WriteLine("Status: " + friend.Status);
+                Console.WriteLine();
+            }
+            return new List<User>();
             
         }
 

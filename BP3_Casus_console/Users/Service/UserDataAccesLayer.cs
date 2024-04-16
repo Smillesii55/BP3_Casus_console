@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using BP3_Casus_console.Users.Friends;
 using static BP3_Casus_console.Users.Friends.FriendRequest;
 using BP3_Casus_console.Events;
+using System.Collections;
 
 namespace BP3_Casus_console.Users.Service
 {
@@ -417,23 +418,27 @@ namespace BP3_Casus_console.Users.Service
             }
         }
 
-        public List <FriendRequest> FriendsList()
+        public List <FriendRequest> FriendsList(int UserID)
         {
             List<FriendRequest> friends = new List<FriendRequest>();
 
-            using (SqlConnection connection = new SqlConnection())
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                using (SqlCommand command = new SqlCommand("SELECT SenderID FROM FriendRequests WHERE UserID = @UserID", connection))
+                string query = "SELECT SenderUserID FROM FriendRequests WHERE RecieverUserID = @RecieverUserID";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    //command.Parameters.AddWithValue("@ID", ID);
+                    command.Parameters.AddWithValue("@RecieveUserID", UserID);
 
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            
+                            FriendRequest @friend = new FriendRequest((int)reader["RequestId"], (int)reader["SenderUserId"], (int)reader["RecieverUserID"], (DateTime)reader["RequestDate"], (FriendRequestStatus)reader["Status"]);
+                            @friend.RequestId = (int)reader["Id"];
+                            friends.Add(@friend);
                         }
                     }
                 }

@@ -163,10 +163,12 @@ void ViewFriends()
 }
 void ViewFriendRequest()
 {
-    FriendService friendservice = FriendService.Instance;
+    FriendService friendService = FriendService.Instance;
     Console.Clear();
 
     Console.WriteLine("Friendrequest list");
+    List<User> friends = friendService.GetFriendsList(CurrentUser.ID);
+    Console.WriteLine(friends);
 
 
     Console.ReadKey();
@@ -181,7 +183,6 @@ void AddFriend()
     Console.WriteLine();
     Console.Write("Enter the username of the friend you want to add: ");
     string friendUsername = Console.ReadLine();
-    //Event? @event = eventService.GetEvents().FirstOrDefault(e => e.Name == eventName);
 
     User? friend = userService.GetUserProdileByUsername(friendUsername);
     friendService.GetId(friendUsername);
@@ -235,7 +236,7 @@ void RemoveFriend()
     }
     else
     {
-        // Remove friend
+        friendService.DeclineFriendRequest(friend.ID);
         Console.WriteLine("Friend removed.");
     }
 
