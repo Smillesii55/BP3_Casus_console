@@ -12,7 +12,7 @@ namespace BP3_Casus_console.Users
     {
         public int GeneralLevel { get; set; } = 1;
         public double GeneralExperience { get; set; } = 0;
-        public List<EventProgress> EventProgresses { get; set; } = new List<EventProgress>();
+        public List<EventTypeProgress> EventProgresses { get; set; } = new List<EventTypeProgress>();
 
         EventService EventService = EventService.Instance;
 
@@ -48,12 +48,13 @@ namespace BP3_Casus_console.Users
             return maxXP;
         }
 
+        // KLOPT NIET MEER!
         public void ParticipateInEvent(Event @event)
         {
-            EventProgress? progress = EventProgresses.FirstOrDefault(p => p.EventID == @event.ID);
+            EventTypeProgress? progress = EventProgresses.FirstOrDefault(p => p.ID == @event.ID);
             if (progress == null)
             {
-                progress = new EventProgress(@event.ID, this.ID);
+                progress = new EventTypeProgress(@event.ID, this.ID);
                 EventProgresses.Add(progress);
             }
         }

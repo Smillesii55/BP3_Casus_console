@@ -4,67 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using BP3_Casus_console.Users;
+using BP3_Casus_console.Users.Service;
 
 namespace BP3_Casus_console.Events.Service
 {
     public class EventDataAccesLayer
     {
-        // To clarify how the EventDataAccesLayer should communicate with the database, here is how the database tables are built and how the data is inserted into them:
-        // use the following SQL queries to create the necessary tables and insert data into them:
-
-        /* -- THE DESIGN OF THE EVENTS TABLE AND THE CORROSPONDING EVENTTAGS AND EVENTPROGRESSES TABLE! --
-        THE EVENTTAGS TABLE CONTAINS THE TAGS WHICH IDENTIFY THE EVENT
-        THE EVENTPROGRESS TABLE CONTAINS THE PROGRESS A PARTICIPANT HAS MADE IN A SPECIFIC EVENT
-
-        CREATE TABLE Events (
-            Id INT IDENTITY(1,1) PRIMARY KEY,
-            Name NVARCHAR(255) NOT NULL,
-            ExperiencePerParticipation FLOAT NOT NULL
-        );
-        CREATE TABLE EventTags (
-            EventId INT,
-            Tag NVARCHAR(255),
-            FOREIGN KEY (EventId) REFERENCES Events(Id)
-        );
-        */
-
-        /* -- CREATING AN EVENT AND ADDING TAGS TO IT! --
-            DECLARE @EventId INT;
-            INSERT INTO Events (Name, ExperiencePerParticipation)
-            VALUES ('Kung Fu', 50);
-
-            SET @EventId = SCOPE_IDENTITY();
-            -- Now, insert tags using @EventId
-            INSERT INTO EventTags (EventId, Tag)
-            VALUES (@EventId, 'Martial Arts');
-            INSERT INTO EventTags (EventId, Tag)
-            VALUES (@EventId, 'Fitness');
-            INSERT INTO EventTags (EventId, Tag)
-            VALUES (@EventId, 'Self Defense');
-            */
-
-        /*
-        CREATE TABLE EventProgresses (
-            EventProgressId INT IDENTITY(1,1) PRIMARY KEY,
-            ID INT,
-            EventId INT,
-            Level INT NOT NULL DEFAULT 1,
-            Experience FLOAT NOT NULL DEFAULT 0,
-            FOREIGN KEY (ID) REFERENCES Users(UserID),
-            FOREIGN KEY (EventId) REFERENCES Events(Id)
-        );
-
-        INSERT INTO EventProgresses (ID, EventId, Level, Experience)
-        VALUES (3, 2, 1, 10.0);
-        */
-
         private string connectionString = "Server=.;Database=BP3Casus;Trusted_Connection=True;";
 
         private EventDataAccesLayer()
         {
         }
-
         private static EventDataAccesLayer? instance = null;
+
         public static EventDataAccesLayer Instance
         {
             get
@@ -77,50 +30,65 @@ namespace BP3_Casus_console.Events.Service
             }
         }
 
+
+
+        public void InsertEventType(EventType eventType)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("INSERT INTO EventTypes (Name, Description, ExpPerParticipant) VALUES (@Name, @Description, @ExpPerParticipant)", connection))
+                {
+                    command.Parameters.AddWithValue("@Name", eventType.Name);
+                    command.Parameters.AddWithValue("@Description", eventType.Description);
+                    command.Parameters.AddWithValue("@ExpPerParticipant", eventType.ExpPerParticipant);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
         public void InsertEvent(Event @event)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("INSERT INTO Events (Name, ExperiencePerParticipation) VALUES (@Name, @ExperiencePerParticipation)", connection))
+                using (SqlCommand command = new SqlCommand("INSERT INTO Events (Date, MaxParticipants, Participants, EventTypeId ) VALUES (@Date, @MaxParticipants, @Participants, @EventTypeId)", connection))
                 {
-                    command.Parameters.AddWithValue("@Name", @event.Name);
-                    command.Parameters.AddWithValue("@ExperiencePerParticipation", @event.ExpPerParticipant);
+                    command.Parameters.AddWithValue("@Date", @event.Date);
+                    command.Parameters.AddWithValue("@MaxParticipants", @event.MaxParticipants);
+                    command.Parameters.AddWithValue("@Participants", @event.Participants.Count);
+                    command.Parameters.AddWithValue("@EventTypeId", @event.EventTypeID);
                     command.ExecuteNonQuery();
                 }
             }
+            InsertEventParticipants(@event.Participants);
+            InsertEventCoach(@event.Coach);
         }
 
-        public void InsertEventTags(Event @event)
+        public void InsertEventTypeTags(EventType @event)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("SELECT Id FROM Events WHERE Name = @Name", connection))
+                foreach (string tag in @event.Tags)
                 {
-                    command.Parameters.AddWithValue("@Name", @event.Name);
-                    int eventId = (int)command.ExecuteScalar();
-                    foreach (string tag in @event.Tags)
+                    using (SqlCommand command = new SqlCommand("INSERT INTO EventTags (EventId, Tag) VALUES (@EventId, @Tag)", connection))
                     {
-                        using (SqlCommand insertCommand = new SqlCommand("INSERT INTO EventTags (EventId, Tag) VALUES (@EventId, @Tag)", connection))
-                        {
-                            insertCommand.Parameters.AddWithValue("@EventId", eventId);
-                            insertCommand.Parameters.AddWithValue("@Tag", tag);
-                            insertCommand.ExecuteNonQuery();
-                        }
+                        command.Parameters.AddWithValue("@EventId", @event.ID);
+                        command.Parameters.AddWithValue("@Tag", tag);
+                        command.ExecuteNonQuery();
                     }
                 }
             }
         }
-
-        public void InsertEventProgress(EventProgress progress)
+        public void InsertEventTypeProgress(EventTypeProgress progress)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("INSERT INTO EventProgresses (ID, EventId, Level, Experience) VALUES (@ID, @EventId, @Level, @Experience)", connection))
+                using (SqlCommand command = new SqlCommand("INSERT INTO EventProgresses (UserId, EventTypeId, Level, Expereince) VALUES (@UserId, @EventId, @Level, @Experience)", connection))
                 {
-                    command.Parameters.AddWithValue("@EventId", progress.EventID);
+                    command.Parameters.AddWithValue("@UserId", progress.UserID);
+                    command.Parameters.AddWithValue("@EventTypeId", progress.EventTypeID);
                     command.Parameters.AddWithValue("@Level", progress.Level);
                     command.Parameters.AddWithValue("@Experience", progress.Experience);
                     command.ExecuteNonQuery();
@@ -128,37 +96,84 @@ namespace BP3_Casus_console.Events.Service
             }
         }
 
+        public void InsertEventParticipants(List<Participant> participants)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                foreach (Participant participant in participants)
+                {
+                    using (SqlCommand command = new SqlCommand("INSERT INTO Participants (EventId, UserId) VALUES (@EventId,@UserId)", connection))
+                    {
+                        command.Parameters.AddWithValue("@EventId", participant.ID);
+                        command.Parameters.AddWithValue("@UserId", participant.ID);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+        public void InsertEventCoach(Coach coach)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("INSERT INTO Coaches (EventId, UserId) VALUES (@EventId,@UserId)", connection))
+                {
+                    command.Parameters.AddWithValue("@EventId", coach.ID);
+                    command.Parameters.AddWithValue("@UserId", coach.ID);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
 
 
+
+        public void UpdateEventType(EventType eventType)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("UPDATE EventTypes SET Name = @Name, Description = @Description, ExpPerParticipant = @ExpPerParticipant WHERE EventTypeId = @EventTypeId", connection))
+                {
+                    command.Parameters.AddWithValue("@Name", eventType.Name);
+                    command.Parameters.AddWithValue("@Description", eventType.Description);
+                    command.Parameters.AddWithValue("@ExpPerParticipant", eventType.ExpPerParticipant);
+                    command.Parameters.AddWithValue("@EventTypeId", eventType.ID);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
         public void UpdateEvent(Event @event)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("UPDATE Events SET Name = @Name, ExperiencePerParticipation = @ExperiencePerParticipation WHERE Id = @Id", connection))
+                using (SqlCommand command = new SqlCommand("UPDATE Events SET Date = @Date, MaxParticipants = @MaxParticipants, Participants = @Participants, EventTypeId = @EventTypeId WHERE EventId = @EventId", connection))
                 {
-                    command.Parameters.AddWithValue("@Name", @event.Name);
-                    command.Parameters.AddWithValue("@ExperiencePerParticipation", @event.ExpPerParticipant);
-                    command.Parameters.AddWithValue("@Id", @event.ID);
+                    command.Parameters.AddWithValue("@Date", @event.Date);
+                    command.Parameters.AddWithValue("@MaxParticipants", @event.MaxParticipants);
+                    command.Parameters.AddWithValue("@Participants", @event.Participants.Count);
+                    command.Parameters.AddWithValue("@EventTypeId", @event.EventTypeID);
+                    command.Parameters.AddWithValue("@EventId", @event.ID);
                     command.ExecuteNonQuery();
                 }
             }
         }
 
-
-        public void UpdateEventTags(Event @event)
+        public void UpdateEventTypeTags(EventType eventType)
         {
-            DeleteEventTags(@event.ID);
-            InsertEventTags(@event);
+            DeleteEventTypeTags(eventType);
+            InsertEventTypeTags(eventType);
         }
-
-        public void UpdateEventProgress(EventProgress progress)
+        public void UpdateEventProgress(EventTypeProgress progress)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("UPDATE EventProgresses SET Level = @Level, Experience = @Experience WHERE EventProgressId = @EventProgressId", connection))
+                using (SqlCommand command = new SqlCommand("UPDATE EventProgresses SET Level = @Level, Experience = @Experience WHERE UserId = @UserId AND EventTypeId = @EventTypeId", connection))
                 {
+                    command.Parameters.AddWithValue("@UserId", progress.UserID);
+                    command.Parameters.AddWithValue("@EventTypeId", progress.EventTypeID);
                     command.Parameters.AddWithValue("@Level", progress.Level);
                     command.Parameters.AddWithValue("@Experience", progress.Experience);
                     command.ExecuteNonQuery();
@@ -166,42 +181,118 @@ namespace BP3_Casus_console.Events.Service
             }
         }
 
+        public void UpdateEventParticipants(Event @event)
+        {
+            DeleteEventParticipants(@event);
+            InsertEventParticipants(@event.Participants);
+        }
+        public void UpdateEventCoach(Event @event)
+        {
+            DeleteEventCoach(@event);
+            InsertEventCoach(@event.Coach);
+        }
 
 
-        public void DeleteEvent(Event @event)
-        {             
+
+        public void DeleteEventType(EventType eventType)
+        {
+            DeleteAllEventTypeProgressesFromEventType(eventType);
+            DeleteEventTypeTags(eventType);
+            DeleteAllEventsFromEventType(eventType);
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("DELETE FROM Events WHERE Id = @Id", connection))
+                using (SqlCommand command = new SqlCommand("DELETE FROM EventTypes WHERE EventTypeId = @EventTypeId", connection))
                 {
-                    command.Parameters.AddWithValue("@Id", @event.ID);
+                    command.Parameters.AddWithValue("@EventTypeId", eventType.ID);
+                    command.ExecuteNonQuery();
+                }
+            }
+
+        }
+        public void DeleteEvent(Event @event)
+        {    
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("DELETE FROM Events WHERE EventId = @EventId", connection))
+                {
+                    command.Parameters.AddWithValue("@EventId", @event.ID);
                     command.ExecuteNonQuery();
                 }
             }
         }
 
-        public void DeleteEventTags(int eventId)
+        public void DeleteAllEventsFromEventType(EventType eventType)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("DELETE FROM Events WHERE EventTypeId = @EventTypeId", connection))
+                {
+                    command.Parameters.AddWithValue("@EventTypeId", eventType.ID);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public void DeleteAllEventTypeProgressesFromEventType(EventType eventType)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("DELETE FROM EventProgresses WHERE EventTypeId = @EventTypeId", connection))
+                {
+                    command.Parameters.AddWithValue("@EventTypeId", eventType.ID);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteEventTypeTags(EventType eventType)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand("DELETE FROM EventTags WHERE EventId = @EventId", connection))
                 {
-                    command.Parameters.AddWithValue("@EventId", eventId);
+                    command.Parameters.AddWithValue("@EventId", eventType.ID);
                     command.ExecuteNonQuery();
                 }
             }
         }
-
-        public void DeleteEventProgress(int eventProgressId)
+        public void DeleteEventTypeProgress(EventTypeProgress eventTypeProgress)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand("DELETE FROM EventProgresses WHERE EventProgressId = @EventProgressId", connection))
                 {
-                    command.Parameters.AddWithValue("@EventProgressId", eventProgressId);
+                    command.Parameters.AddWithValue("@EventProgressId", eventTypeProgress.ID);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteEventParticipants(Event @event)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("DELETE FROM EventParticipants WHERE EventId = @EventId", connection))
+                {
+                    command.Parameters.AddWithValue("@EventId", @event.ID);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public void DeleteEventCoach(Event @event)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("DELETE FROM EventCoaches WHERE EventId = @EventId", connection))
+                {
+                    command.Parameters.AddWithValue("@EventId", @event.ID);
                     command.ExecuteNonQuery();
                 }
             }
@@ -211,116 +302,302 @@ namespace BP3_Casus_console.Events.Service
 
         public Event? GetEventById(int eventId)
         {
+            Coach coach = GetEventCoachByEventID(eventId);
+            List<Participant> participants = GetEventParticipantsByEventID(eventId);
+            EventType eventType = GetEvent_EventTypeByEventID(eventId);
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Id = @Id", connection))
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE EventId = @EventId", connection))
                 {
-                    command.Parameters.AddWithValue("@Id", eventId);
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            Event @event = new Event(reader["Name"].ToString(), (double)reader["ExperiencePerParticipation"]);
-                            @event.ID = (int)reader["Id"];
-                            return @event;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-
-        public List<Event>? GetEventsByTag(string tag)
-        {
-            List<Event> events = new List<Event>();
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Id IN (SELECT EventId FROM EventTags WHERE Tag = @Tag)", connection))
-                {
-                    command.Parameters.AddWithValue("@Tag", tag);
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Event @event = new Event(reader["Name"].ToString(), (double)reader["ExperiencePerParticipation"]);
-                            @event.ID = (int)reader["Id"];
-                            events.Add(@event);
-                        }
-                    }
-                }
-            }
-            return events;
-        }
-
-        public Event GetEventByName(string eventName)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Name = @Name", connection))
-                {
-                    command.Parameters.AddWithValue("@Name", eventName);
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            Event @event = new Event(reader["Name"].ToString(), (double)reader["ExperiencePerParticipation"]);
-                            @event.ID = (int)reader["Id"];
-                            return @event;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        public List<Event>? GetEvents()
-        {
-            List<Event> events = new List<Event>();
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand("SELECT * FROM Events", connection))
-                {
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Event @event = new Event(reader["Name"].ToString(), (double)reader["ExperiencePerParticipation"]);
-                            @event.ID = (int)reader["Id"];
-                            events.Add(@event);
-                        }
-                    }
-                }
-            }
-            return events;
-        }
-
-        public EventProgress? GetEventProgress(int userId, int eventId)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand("SELECT * FROM EventProgresses WHERE ID = @ID AND EventId = @EventId", connection))
-                {
-                    command.Parameters.AddWithValue("@ID", userId);
                     command.Parameters.AddWithValue("@EventId", eventId);
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            EventProgress progress = new EventProgress((int)reader["EventId"], (int)reader["ID"]);
-                            progress.Level = (int)reader["Level"];
-                            progress.Experience = (double)reader["Experience"];
-                            return progress;
+                            Event @event = new Event(coach, eventType.ExpPerParticipant, (DateTime)reader["Date"], (int)reader["MaxParticipants"]);
+                            @event.ID = eventId;
+                            @event.Participants = participants;
+                            @event.EventTypeID = eventType.ID;
+                            return @event;
+                        }
+                        else
+                        {
+                            return null;
                         }
                     }
                 }
             }
+
+
+        }
+        public Event? GetEventByName(string eventName)
+        {
+            Coach coach = GetEventCoachByEventName(eventName);
+            List<Participant> participants = GetEventParticipantsByEventName(eventName);
+            EventType eventType = GetEvent_EventTypeByEventName(eventName);
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Date = @Date AND MaxParticipants = @MaxParticipants AND Participants = @Participants AND EventTypeId = @EventTypeId", connection))
+                {
+                    command.Parameters.AddWithValue("@Date", DateTime.Now);
+                    command.Parameters.AddWithValue("@MaxParticipants", 0);
+                    command.Parameters.AddWithValue("@Participants", 0);
+                    command.Parameters.AddWithValue("@EventTypeId", eventType.ID);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            Event @event = new Event(coach, eventType.ExpPerParticipant, (DateTime)reader["Date"], (int)reader["MaxParticipants"]);
+                            @event.ID = (int)reader["EventId"];
+                            @event.Participants = participants;
+                            @event.EventTypeID = eventType.ID;
+                            return @event;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+
+        public EventType GetEventTypeById(int eventTypeId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM EventTypes WHERE Id = @Id", connection))
+                {
+                    command.Parameters.AddWithValue("@Id", eventTypeId);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            EventType eventType = new EventType((string)reader["Name"], (string)reader["Description"], (double)reader["ExpPerParticipant"]);
+                            eventType.ID = eventTypeId;
+                            return eventType;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+        public EventType GetEventTypeByName(string eventTypeName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM EventTypes WHERE Name = @Name", connection))
+                {
+                    command.Parameters.AddWithValue("@Name", eventTypeName);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            EventType eventType = new EventType((string)reader["Name"], (string)reader["Description"], (double)reader["ExpPerParticipant"]);
+                            eventType.ID = (int)reader["EventTypeId"];
+                            return eventType;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+
+        public Coach GetEventCoachByEventID(int eventId)
+        {
+            UserDataAccesLayer userDataAccesLayer = UserDataAccesLayer.Instance;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM EventCoach WHERE EventId = @EventId", connection))
+                {
+                    command.Parameters.AddWithValue("@EventId", eventId);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return (Coach)userDataAccesLayer.GetUserById((int)reader["UserId"]);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+        public Coach GetEventCoachByEventName(string coachName)
+        {
+            UserDataAccesLayer userDataAccesLayer = UserDataAccesLayer.Instance;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM EventCoach WHERE UserId = @UserId", connection))
+                {
+                    command.Parameters.AddWithValue("@UserId", userDataAccesLayer.GetUserByUsername(coachName).ID);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return (Coach)userDataAccesLayer.GetUserById((int)reader["UserId"]);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+
+        public List<Participant> GetEventParticipantsByEventID(int eventId)
+        {
+            UserDataAccesLayer userDataAccesLayer = UserDataAccesLayer.Instance;
+            List<Participant> participants = new List<Participant>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM EventParticipants WHERE EventId = @EventId", connection))
+                {
+                    command.Parameters.AddWithValue("@EventId", eventId);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            participants.Add((Participant)userDataAccesLayer.GetUserById((int)reader["UserId"]));
+                        }
+                    }
+                }
+            }
+            return participants;
+        }
+        public List<Participant> GetEventParticipantsByEventName(string eventName)
+        {
+            UserDataAccesLayer userDataAccesLayer = UserDataAccesLayer.Instance;
+            List<Participant> participants = new List<Participant>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM EventParticipants WHERE EventId = @EventId", connection))
+                {
+                    command.Parameters.AddWithValue("@EventId", GetEventByName(eventName).ID);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            participants.Add((Participant)userDataAccesLayer.GetUserById((int)reader["UserId"]));
+                        }
+                    }
+                }
+            }
+            return participants;
+        }
+
+        public EventType GetEventTypeByEventId(int evenId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE EventId = @EventId", connection))
+                {
+                    command.Parameters.AddWithValue("@EventId", evenId);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return GetEventTypeById((int)reader["EventTypeId"]);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+        public EventType GetEvent_EventTypeByEventID(int eventId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE EventId = @EventId", connection))
+                {
+                    command.Parameters.AddWithValue("@EventId", eventId);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return GetEventTypeByEventId((int)reader["EventTypeId"]);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+        public EventType GetEvent_EventTypeByEventName(string eventName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE EventId = @EventId", connection))
+                {
+                    command.Parameters.AddWithValue("@EventId", GetEventByName(eventName).ID);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return GetEventTypeByEventId((int)reader["EventTypeId"]);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+
+        public List<EventType>? GetEventTypesByTag(string tag)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM EventTags WHERE Tag = @Tag", connection))
+                {
+                    command.Parameters.AddWithValue("@Tag", tag);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<EventType> eventTypes = new List<EventType>();
+                        while (reader.Read())
+                        {
+                            eventTypes.Add(GetEventTypeByEventId((int)reader["EventId"]));
+                        }
+                        return eventTypes;
+                    }
+                }
+            }
+        }
+
+        public List<EventType> GetEventTypes()
+        {
             return null;
         }
+        public List<Event>? GetEvents()
+        {
+            return null;
+        }    
     }
 }

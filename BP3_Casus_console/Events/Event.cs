@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BP3_Casus_console.Users;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,14 +10,19 @@ namespace BP3_Casus_console.Events
     public class Event
     {
         public int ID { get; set; }
-        public string Name { get; set; }
-        public double ExpPerParticipant { get; set; }
-        public List<String> Tags { get; set; } = new List<string>();
+        public int EventTypeID { get; set; }  // Verwijzing naar EventType
+        public DateTime Date { get; set; }
+        public int MaxParticipants { get; set; }
 
-        public Event(string name, double expPerParticipant)
+        public Coach Coach { get; set; }
+        public List<Participant> Participants { get; set; } = new List<Participant>();
+
+
+        public Event(Coach coach, double expPerParticipant, DateTime Date, int MaxParticipants)
         {
-            Name = name;
-            ExpPerParticipant = expPerParticipant;
+            Coach = coach;
+            this.Date = Date;
+            this.MaxParticipants = MaxParticipants;
         }
     }
 }

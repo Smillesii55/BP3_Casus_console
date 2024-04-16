@@ -8,6 +8,8 @@ using System.Text;
 UserService userService = UserService.Instance;
 FriendService friendService = FriendService.Instance;
 
+EventDataAccesLayer eventDataAccesLayer = EventDataAccesLayer.Instance;
+
 // give the user the option to log in or register
 Console.WriteLine("Welcome to the Fitness App!");
 Console.WriteLine();
@@ -65,7 +67,6 @@ User Login()
 
     return loggedInUser;
 }
-
 User Register()
 {
     Console.Clear();
@@ -88,54 +89,119 @@ User Register()
     return user;
 }
 
-while (true)
-{
-    Console.Clear();
-    Console.WriteLine("Welcome, " + CurrentUser.FirstName + "!");
-    Console.WriteLine();
-    Console.WriteLine("1. View profile");
-    Console.WriteLine("2. Edit profile");
-    Console.WriteLine("3. View friends");
-    Console.WriteLine("4. Add friend");
-    Console.WriteLine("5. Remove friend");
-    Console.WriteLine("6. View events");
-    Console.WriteLine("7. Participate in event");
-    Console.WriteLine("8. Exit");
-    Console.WriteLine();
-    Console.Write("Select an option: ");
-    string input = Console.ReadLine();
+// Check if the user is a coach or a participant, we need to display different options based on the user type
 
-    switch (input)
+if (CurrentUser.Type == User.UserType.Coach)
+{
+    while (true)
     {
-        case "1":
-            ViewProfile();
-            break;
-        case "2":
-            EditProfile();
-            break;
-        case "3":
-            ViewFriends();
-            break;
-        case "4":
-            AddFriend();
-            break;
-        case "5":
-            RemoveFriend();
-            break;
-        case "6":
-            ViewEvents();
-            break;
-        case "7":
-            ParticipateInEvent();
-            break;
-        case "8":
-            return;
-        default:
-            Console.WriteLine("Invalid input. Press any key to try again.");
-            Console.ReadKey();
-            break;
+        Console.Clear();
+        Console.WriteLine("Welcome, " + CurrentUser.FirstName + "!");
+        Console.WriteLine();
+        Console.WriteLine("1. View profile");
+        Console.WriteLine("2. Edit profile");
+        Console.WriteLine("3. View friends");
+        Console.WriteLine("4. Add friend");
+        Console.WriteLine("5. Remove friend");
+        Console.WriteLine("6. View events");
+        Console.WriteLine("7. Create event");
+        Console.WriteLine("8. Edit event");
+        Console.WriteLine("9. Delete event");
+        Console.WriteLine("10. Exit");
+        Console.WriteLine();
+        Console.Write("Select an option: ");
+        string input = Console.ReadLine();
+
+        switch (input)
+        {
+            case "1":
+                //ViewProfile();
+                break;
+            case "2":
+                EditProfile();
+                break;
+            case "3":
+                ViewFriends();
+                break;
+            case "4":
+                AddFriend();
+                break;
+            case "5":
+                RemoveFriend();
+                break;
+            case "6":
+                ViewEvents();
+                break;
+            case "7":
+                CreateEvent();
+                break;
+            case "8":
+                //EditEvent();
+                break;
+            case "9":
+                //DeleteEvent();
+                break;
+            case "10":
+                return;
+            default:
+                Console.WriteLine("Invalid input. Press any key to try again.");
+                Console.ReadKey();
+                break;
+        }
     }
 }
+else if (CurrentUser.Type == User.UserType.Participant)
+{
+    while (true)
+    {
+        Console.Clear();
+        Console.WriteLine("Welcome, " + CurrentUser.FirstName + "!");
+        Console.WriteLine();
+        Console.WriteLine("1. View profile");
+        Console.WriteLine("2. Edit profile");
+        Console.WriteLine("3. View friends");
+        Console.WriteLine("4. Add friend");
+        Console.WriteLine("5. Remove friend");
+        Console.WriteLine("6. View events");
+        Console.WriteLine("7. Participate in event");
+        Console.WriteLine("8. Exit");
+        Console.WriteLine();
+        Console.Write("Select an option: ");
+        string input = Console.ReadLine();
+
+        switch (input)
+        {
+            case "1":
+                //ViewProfile();
+                break;
+            case "2":
+                EditProfile();
+                break;
+            case "3":
+                ViewFriends();
+                break;
+            case "4":
+                AddFriend();
+                break;
+            case "5":
+                RemoveFriend();
+                break;
+            case "6":
+                ViewEvents();
+                break;
+            case "7":
+                //ParticipateInEvent();
+                break;
+            case "8":
+                return;
+            default:
+                Console.WriteLine("Invalid input. Press any key to try again.");
+                Console.ReadKey();
+                break;
+        }
+    }
+}
+/*
 void ViewProfile()
 {
     UserService userService = UserService.Instance;
@@ -160,15 +226,16 @@ void ViewProfile()
         Console.WriteLine("General experience: " + (userProfile as Participant)?.GeneralExperience);
         // display all the eventprogresses
         Console.WriteLine("Event progresses:");
-        foreach (EventProgress progress in (userProfile as Participant)?.EventProgresses)
+        foreach (EventTypeProgress progress in (userProfile as Participant)?.EventProgresses)
         {
-            Console.WriteLine("Event: " + progress.@event.Name + ", Level: " + progress.Level + ", Experience: " + progress.Experience);
+            Console.WriteLine("Event: " + eventDataAccesLayer.GetEvent_EventTypeByEventID(progress.EventTypeID).Name + ", Level: " + progress.Level + ", Experience: " + progress.Experience);
         }
     }
     Console.WriteLine();
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
+*/
 void EditProfile()
 {
     UserService userService = UserService.Instance;
@@ -311,6 +378,7 @@ void ViewEvents()
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
+/*
 void ParticipateInEvent()
 {
     EventService eventService = EventService.Instance;
@@ -344,5 +412,96 @@ void ParticipateInEvent()
     Console.WriteLine();
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
-    
+
 }
+*/
+
+void CreateEvent()
+{
+    EventService eventService = EventService.Instance;
+
+    Console.Clear();
+    Console.WriteLine("Create event");
+    Console.WriteLine();
+    Console.Write("Name: ");
+    string name = Console.ReadLine();
+    Console.Write("Description: ");
+    string description = Console.ReadLine();
+    Console.Write("Date (yyyy-MM-dd): ");
+    DateTime date = DateTime.Parse(Console.ReadLine());
+    Console.Write("Location: ");
+    string location = Console.ReadLine();
+    Console.Write("Capacity: ");
+    int capacity = int.Parse(Console.ReadLine());
+
+    //Event @event = eventService.CreateEvent(name, description, date, location, capacity);
+    Console.WriteLine("Event created.");
+    Console.WriteLine();
+    Console.WriteLine("Press any key to return.");
+    Console.ReadKey();
+}
+/*
+void EditEvent()
+{
+    EventService eventService = EventService.Instance;
+
+    Console.Clear();
+    Console.WriteLine("Edit event");
+    Console.WriteLine();
+    Console.Write("Enter the name of the event you want to edit: ");
+    string eventName = Console.ReadLine();
+    Event? @event = eventService.GetEventByName(eventName);
+
+    if (@event == null)
+    {
+        Console.WriteLine("Event not found.");
+    }
+    else
+    {
+        Console.Write("Name: ");
+        @event.Name = Console.ReadLine();
+        Console.Write("Description: ");
+        @event.Description = Console.ReadLine();
+        Console.Write("Date (yyyy-MM-dd): ");
+        @event.Date = DateTime.Parse(Console.ReadLine());
+        Console.Write("Location: ");
+        @event.Location = Console.ReadLine();
+        Console.Write("Capacity: ");
+        @event.Capacity = int.Parse(Console.ReadLine());
+
+        eventService.UpdateEvent(@event);
+        Console.WriteLine("Event updated.");
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("Press any key to return.");
+    Console.ReadKey();
+}
+*/
+/*
+void DeleteEvent()
+{
+    EventService eventService = EventService.Instance;
+
+    Console.Clear();
+    Console.WriteLine("Delete event");
+    Console.WriteLine();
+    Console.Write("Enter the name of the event you want to delete: ");
+    string eventName = Console.ReadLine();
+    Event? @event = eventService.GetEventByName(eventName);
+
+    if (@event == null)
+    {
+        Console.WriteLine("Event not found.");
+    }
+    else
+    {
+        eventService.DeleteEvent(@event);
+        Console.WriteLine("Event deleted.");
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("Press any key to return.");
+    Console.ReadKey();
+}
+*/
