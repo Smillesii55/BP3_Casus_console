@@ -77,6 +77,7 @@ namespace BP3_Casus_console.Users.Service
             DateTime requestDate = DateTime.Now;
             FriendRequestStatus status = FriendRequestStatus.Declined;
 
+
             FriendRequest friendRequest = new FriendRequest(requestId, 0, 0, requestDate, status);
             friendRequestList.Add(friendRequest);
 

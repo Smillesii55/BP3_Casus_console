@@ -426,7 +426,7 @@ namespace BP3_Casus_console.Users.Service
             {
                 connection.Open();
 
-                string query = "SELECT * FROM FriendRequest WHERE ReceiverUserId (SELECT UserId FROM User WHERE UserId = @UserID)";
+                string query = "SELECT * FROM FriendRequests WHERE RecieverUserID IN (SELECT UserId FROM Users WHERE UserId = @UserID)";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -436,7 +436,7 @@ namespace BP3_Casus_console.Users.Service
                     {
                         while (reader.Read())
                         {
-                            FriendRequest @friend = new FriendRequest((int)reader["RequestId"], (int)reader["SenderUserId"], (int)reader["RecieverUserID"], (DateTime)reader["RequestDate"], (FriendRequestStatus)reader["Status"]);
+                            FriendRequest @friend = new FriendRequest(0, (int)reader["SenderUserId"], (int)reader["RecieverUserID"], (DateTime)reader["RequestDate"], (FriendRequestStatus)reader["status"]);
                             @friend.RequestId = (int)reader["ID"];
                             friends.Add(@friend);
                         }

@@ -27,6 +27,7 @@ namespace BP3_Casus_console.Users.Friends
             ReceiverUserId = receiverUserId;
             RequestDate = requestDate;
             Status = status;
+
         }
     }
 }
