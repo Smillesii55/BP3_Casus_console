@@ -8,6 +8,7 @@ namespace BP3_Casus_console.Users.Friends
 {
     public class UserRelationship
     {
+        public int ID { get; set; } 
         public int UserId1 { get; set; }
         public int UserId2 { get; set; }
 
@@ -16,6 +17,14 @@ namespace BP3_Casus_console.Users.Friends
         {
             Friend,
             Blocked
+        }
+
+        public UserRelationship(int userId1, int userId2, RelationshipType relationship)
+        {
+            UserId1 = userId1;  
+            UserId2 = userId2;
+            Relationship = relationship;
+
         }
     }
 }

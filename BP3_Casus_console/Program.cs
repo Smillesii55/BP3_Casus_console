@@ -4,6 +4,7 @@ using BP3_Casus_console.Users;
 using BP3_Casus_console.Users.Friends;
 using BP3_Casus_console.Users.Service;
 using System.Text;
+using static BP3_Casus_console.Users.Friends.FriendRequest;
 
 UserService userService = UserService.Instance;
 FriendService friendService = FriendService.Instance;
@@ -164,10 +165,31 @@ void ViewFriends()
 void ViewFriendRequest()
 {
     FriendService friendService = FriendService.Instance;
+    UserService userService = UserService.Instance;
     Console.Clear();
 
     Console.WriteLine("Friendrequest list");
     List<User> friends = friendService.GetFriendsList(CurrentUser.ID);
+
+    Console.WriteLine("Choose the friendrequest you want to accept or decline: ");
+    int requestID = Convert.ToInt32(Console.ReadLine());
+
+    Console.WriteLine("1: Accept");
+    Console.WriteLine("2: Decline");
+    string answer = Console.ReadLine();
+
+    if (answer == "1")
+    {
+        //Werkt. Er staat in de Database Accepted
+        friendService.AcceptFriendRequest(CurrentUser.ID);
+    }
+    else if (answer == "2")
+    {
+        friendService.DeclineFriendRequest(CurrentUser.ID);
+    }
+
+    //Make sure you can see the name of the reciever en sender instead of the ID.
+
     Console.WriteLine(friends);
 
 

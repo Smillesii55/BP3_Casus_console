@@ -9,6 +9,7 @@ using BP3_Casus_console.Users.Friends;
 using static BP3_Casus_console.Users.Friends.FriendRequest;
 using BP3_Casus_console.Events;
 using System.Collections;
+using static BP3_Casus_console.Users.Friends.UserRelationship;
 
 namespace BP3_Casus_console.Users.Service
 {
@@ -389,11 +390,11 @@ namespace BP3_Casus_console.Users.Service
             {
                 connection.Open();
 
-                string query = "UPDATE FriendRequests SET Status = @Status WHERE RequestId = @RequestId";
+                string query = "UPDATE FriendRequests SET Status = @Status WHERE ID = @ID";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@RequestId", friendRequest.RequestId);
+                    command.Parameters.AddWithValue("@ID", friendRequest.RequestId);
                     command.Parameters.AddWithValue("@Status", friendRequest.Status.ToString());
 
                     command.ExecuteNonQuery();
@@ -418,7 +419,7 @@ namespace BP3_Casus_console.Users.Service
             }
         }
 
-        public List <FriendRequest> FriendsList(int userID)
+        public List <FriendRequest> FriendRequestList(int userID)
         {
             List<FriendRequest> friends = new List<FriendRequest>();
 
@@ -441,11 +442,44 @@ namespace BP3_Casus_console.Users.Service
                             FriendRequest @friend = new FriendRequest(0, (int)reader["SenderUserId"], (int)reader["RecieverUserID"], (DateTime)reader["RequestDate"], status);
                             @friend.RequestId = (int)reader["ID"];
                             friends.Add(@friend);
+
                         }
                     }
                 }
             }
             return friends;
         }
+
+        public List<UserRelationship> FriendsList(int userID)
+        {
+            List<UserRelationship> friendsList = new List<UserRelationship>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM UserRelations WHERE UserID1 IN (SELECT UserId FROM Users WHERE UserId = @UserID)";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserID", userID);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+
+                            UserRelationship @friend = new UserRelationship((int)reader["UserId1"], (int)reader["UserId2"], (RelationshipType)reader["Relationship"]);
+                            @friend.UserId1 = (int)reader["ID"];
+                            friendsList.Add(@friend);
+
+                        }
+                    }
+                }
+            }
+            return friendsList;
+        }
+       
+
     }
 }

@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static BP3_Casus_console.Users.Friends.FriendRequest;
+using System.Transactions;
+using static BP3_Casus_console.Users.Friends.UserRelationship;
 
 namespace BP3_Casus_console.Users.Service
 {
@@ -58,12 +60,15 @@ namespace BP3_Casus_console.Users.Service
             FriendRequestStatus status = FriendRequestStatus.Accepted;
 
             FriendRequest friendRequest = new FriendRequest(requestId, 0, 0, requestDate, status);
-            friendRequestList.Add(friendRequest); 
+            friendRequestList.Add(friendRequest);
 
-            UserRelationship userRelationship = new UserRelationship();
+            RelationshipType relationship = RelationshipType.Friend;
+
+            UserRelationship userRelationship = new UserRelationship(0, 0, relationship);
             userRelationships.Add(userRelationship);
 
             UserDataAccesLayer.UpdateRequestStatus(friendRequest);
+            UserDataAccesLayer.InsertUserRelationship(userRelationship);
 
             // Retrieve the request by requestId
             // Change its status to Accepted
@@ -89,7 +94,7 @@ namespace BP3_Casus_console.Users.Service
 
         public List<User> GetFriendsList(int userID)
         {
-            List<FriendRequest> friends = UserDataAccesLayer.FriendsList(userID);
+            List<FriendRequest> friends = UserDataAccesLayer.FriendRequestList(userID);
             foreach (FriendRequest friend in friends)
             {
                 Console.WriteLine("Friend Request Details:");
@@ -102,6 +107,11 @@ namespace BP3_Casus_console.Users.Service
             }
             return new List<User>();
             
+        }
+
+        public List<User> GetFriendsList()
+        {
+            return new List<User>();
         }
 
         public void GetId(string username)
