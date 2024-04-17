@@ -316,4 +316,26 @@ void GetPreferedEvents()
         answers.Add(question.Options[int.Parse(answer) - 1]);
         Console.WriteLine();
     }
+
+    // process answers
+    List<Event> preferedEvents = quizService.ProcessAnswers(answers);
+
+    // list events
+    if (preferedEvents.Count == 0)
+    {
+        Console.WriteLine("No prefered events found.");
+    }
+    else
+    {
+        Console.WriteLine("These are some prefered events");
+
+        foreach (Event @event in preferedEvents)
+        {
+            Console.WriteLine(@event.Name);
+        }
+    }
+
+    Console.WriteLine("");
+    Console.WriteLine("Type something to continue...");
+    Console.ReadLine();
 }
