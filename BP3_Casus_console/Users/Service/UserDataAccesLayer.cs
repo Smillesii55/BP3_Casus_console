@@ -436,7 +436,9 @@ namespace BP3_Casus_console.Users.Service
                     {
                         while (reader.Read())
                         {
-                            FriendRequest @friend = new FriendRequest(0, (int)reader["SenderUserId"], (int)reader["RecieverUserID"], (DateTime)reader["RequestDate"], (FriendRequestStatus)reader["status"]);
+                            string statusString = reader["status"].ToString();
+                            FriendRequestStatus status = (FriendRequestStatus)Enum.Parse(typeof(FriendRequestStatus), statusString);
+                            FriendRequest @friend = new FriendRequest(0, (int)reader["SenderUserId"], (int)reader["RecieverUserID"], (DateTime)reader["RequestDate"], status);
                             @friend.RequestId = (int)reader["ID"];
                             friends.Add(@friend);
                         }
