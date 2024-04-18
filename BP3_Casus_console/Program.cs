@@ -285,7 +285,9 @@ void ViewFriends()
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
-/*
+
+
+
 void AddFriend()
 {
     FriendService friendService = FriendService.Instance;
@@ -321,6 +323,7 @@ void AddFriend()
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
+/*
 void RemoveFriend()
 {
     FriendService friendService = FriendService.Instance;

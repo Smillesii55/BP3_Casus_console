@@ -429,5 +429,88 @@ namespace BP3_Casus_console.Users.Service
                 }
             }
         }
+
+        public List<FriendRequest> FriendRequestList(int userID)
+        {
+            List<FriendRequest> friends = new List<FriendRequest>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM FriendRequests WHERE RecieverUserID IN (SELECT UserId FROM Users WHERE UserId = @UserID)";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserID", userID);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string statusString = reader["status"].ToString();
+                            FriendRequestStatus status = (FriendRequestStatus)Enum.Parse(typeof(FriendRequestStatus), statusString);
+                            FriendRequest @friend = new FriendRequest(0, (int)reader["SenderUserId"], (int)reader["RecieverUserID"], (DateTime)reader["Date"], status);
+                            @friend.RequestId = (int)reader["ID"];
+                            friends.Add(@friend);
+
+                        }
+                    }
+                }
+            }
+            return friends;
+        }
+
+        public List<UserRelationship> FriendsList(int userID)
+        {
+            List<UserRelationship> friendsList = new List<UserRelationship>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM UserRelations WHERE UserID IN (SELECT UserId FROM Users WHERE UserId = @UserID)";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserID", userID);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string typeString = reader["Type"].ToString();
+                            RelationshipType type = (RelationshipType)Enum.Parse(typeof(RelationshipType), typeString);
+                            UserRelationship @friend = new UserRelationship((int)reader["UserID"], (int)reader["User2ID"], type);
+                            @friend.UserId1 = (int)reader["ID"];
+                            friendsList.Add(@friend);
+
+                        }
+                    }
+                }
+            }
+            return friendsList;
+        }
+
+        public void InsertUserRelation(UserRelationship userRelationship)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "INSERT INTO UserRelations (UserID, User2ID, Type) VALUES (@UserID, @User2ID, @Type)";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserID", userRelationship.UserId1);
+                    command.Parameters.AddWithValue("@User2ID", userRelationship.UserId2);
+                    command.Parameters.AddWithValue("@Type", userRelationship.Relationship);
+
+                    command.ExecuteNonQuery();
+
+
+                }
+            }
+        }
     }
 }
