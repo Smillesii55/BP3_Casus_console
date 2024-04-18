@@ -15,7 +15,8 @@ namespace BP3_Casus_console.Users.Service
 {
     public class FriendService
     {
-        FriendDataAccesLayer UserDataAccesLayer = FriendDataAccesLayer.Instance;
+        FriendDataAccesLayer FriendDataAccesLayer = FriendDataAccesLayer.Instance;
+        UserService userService = UserService.Instance;
 
         private FriendService()
         {
@@ -43,7 +44,7 @@ namespace BP3_Casus_console.Users.Service
 
             FriendRequest friendRequest = new FriendRequest(0, senderUserId, receiverUserId, requestDate, status);
 
-            UserDataAccesLayer.InsertRequest(friendRequest);
+            FriendDataAccesLayer.InsertRequest(friendRequest);
             friendRequestList.Add(friendRequest);
         }
 
@@ -57,16 +58,34 @@ namespace BP3_Casus_console.Users.Service
 
         }
 
-        public List<User> GetFriendsList(int userID)
+        public List<User> GetFriendRequestList(int userID)
         {
+            List<User> friendRequestList = new List<User>();
 
-            return new List<User>();
+            List<FriendRequest> requests = FriendDataAccesLayer.FriendRequestList(userID);
 
+            foreach (FriendRequest request in requests)
+            {
+                User user = userService.GetUserProfileById(request.SenderUserId);
+                friendRequestList.Add(user);
+            }
+
+            return friendRequestList;
         }
 
-        public List<User> FriendsList(int userID)
+        public List<User> GetFriendsList(int userID)
         {
-            return new List<User>();
+            List<User> friendsList = new List<User>();
+
+            List<UserRelationship> friends = FriendDataAccesLayer.FriendsList(userID);
+
+            foreach (UserRelationship friend in friends)
+            {
+                User user = userService.GetUserProfileById(friend.UserId2);
+                friendsList.Add(user);
+            }
+
+            return friendsList;
         }
 
         public void GetId(string username)

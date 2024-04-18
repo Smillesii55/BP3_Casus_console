@@ -69,22 +69,21 @@ namespace BP3_Casus_console.Users.Service
             {
                 connection.Open();
 
-                string query = "SELECT * FROM UserRelations WHERE UserID IN (SELECT UserId FROM Users WHERE UserId = @UserID)";
+                string query = "SELECT * FROM UserRelations WHERE UserID = @UserId AND  Type = @Type";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@UserID", userID);
+                    command.Parameters.AddWithValue("@UserId", userID);
+                    command.Parameters.AddWithValue("@Type", RelationshipType.Friend.ToString());
 
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
                             string typeString = reader["Type"].ToString();
-                            RelationshipType type = (RelationshipType)Enum.Parse(typeof(RelationshipType), typeString);
-                            UserRelationship @friend = new UserRelationship((int)reader["UserID"], (int)reader["User2ID"], type);
+                            UserRelationship @friend = new UserRelationship((int)reader["UserID"], (int)reader["User2ID"], RelationshipType.Friend);
                             @friend.UserId1 = (int)reader["ID"];
                             friendsList.Add(@friend);
-
                         }
                     }
                 }
