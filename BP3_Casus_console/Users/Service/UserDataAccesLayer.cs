@@ -6,7 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using BP3_Casus_console.Users.Friends;
+using static BP3_Casus_console.Users.Friends.FriendRequest;
 using BP3_Casus_console.Events;
+using System.Collections;
+using static BP3_Casus_console.Users.Friends.UserRelationship;
 
 namespace BP3_Casus_console.Users.Service
 {
@@ -94,7 +97,7 @@ namespace BP3_Casus_console.Users.Service
         WHERE Username = 'marcelluswallace';
         */
 
-        private string connectionString = "Server=.;Database=BP3Casus;Trusted_Connection=True;";
+        private string connectionString = "Data Source=.;Initial Catalog=BP3Casus;Integrated Security=True;Encrypt=False";
 
         private UserDataAccesLayer()
         {
@@ -237,7 +240,6 @@ namespace BP3_Casus_console.Users.Service
                                 participant.ID = userId;
                                 participant.GeneralLevel = generalLevel;
                                 participant.GeneralExperience = generalExperience;
-                                GetEventProgressesOfParticipant(participant);
                                 return participant;
                             }
                             else if (userType == User.UserType.Coach)
@@ -272,13 +274,13 @@ namespace BP3_Casus_console.Users.Service
                     {
                         if (reader.Read())
                         {
-                            int userId = reader.GetInt32(0);
-                            string password = reader.GetString(2);
-                            string email = reader.GetString(3);
-                            string firstName = reader.GetString(4);
-                            string lastName = reader.GetString(5);
-                            DateTime dateOfBirth = reader.GetDateTime(6);
-                            User.UserType userType = (User.UserType)Enum.Parse(typeof(User.UserType), reader.GetString(7));
+                            int userId = reader.GetInt32(reader.GetOrdinal("UserID"));
+                            string password = reader.GetString(reader.GetOrdinal("Password"));
+                            string email = reader.GetString(reader.GetOrdinal("Email"));
+                            string firstName = reader.GetString(reader.GetOrdinal("FirstName"));
+                            string lastName = reader.GetString(reader.GetOrdinal("LastName"));
+                            DateTime dateOfBirth = reader.GetDateTime(reader.GetOrdinal("DateOfBirth"));
+                            User.UserType userType = (User.UserType)Enum.Parse(typeof(User.UserType), reader.GetString(reader.GetOrdinal("UserType")));
 
                             if (userType == User.UserType.Participant)
                             {
@@ -289,7 +291,6 @@ namespace BP3_Casus_console.Users.Service
                                 participant.ID = userId;
                                 participant.GeneralLevel = generalLevel;
                                 participant.GeneralExperience = generalExperience;
-                                GetEventProgressesOfParticipant(participant);
                                 return participant;
                             }
                             else if (userType == User.UserType.Coach)
@@ -314,24 +315,23 @@ namespace BP3_Casus_console.Users.Service
             {
                 connection.Open();
 
-                //string query = "SELECT * FROM Users WHERE Username = 'sgreen_nutrition' AND Password = 'pass456Secure'";
                 string query = "SELECT * FROM Users WHERE Username = @Username AND Password = @Password";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Username", username);
                     command.Parameters.AddWithValue("@Password", password);
+
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            int userId = reader.GetInt32(0);
-                            string email = reader.GetString(3);
-                            string firstName = reader.GetString(4);
-                            string lastName = reader.GetString(5);
-                            DateTime dateOfBirth = reader.GetDateTime(6);
-                            Console.WriteLine(reader.GetString(7));
-                            User.UserType userType = (User.UserType)Enum.Parse(typeof(User.UserType), reader.GetString(7));
+                            int userId = reader.GetInt32(reader.GetOrdinal("UserID"));
+                            string email = reader.GetString(reader.GetOrdinal("Email"));
+                            string firstName = reader.GetString(reader.GetOrdinal("FirstName"));
+                            string lastName = reader.GetString(reader.GetOrdinal("LastName"));
+                            DateTime dateOfBirth = reader.GetDateTime(reader.GetOrdinal("DateOfBirth"));
+                            User.UserType userType = (User.UserType)Enum.Parse(typeof(User.UserType), reader.GetString(reader.GetOrdinal("UserType")));
 
                             if (userType == User.UserType.Participant)
                             {
@@ -342,7 +342,6 @@ namespace BP3_Casus_console.Users.Service
                                 participant.ID = userId;
                                 participant.GeneralLevel = generalLevel;
                                 participant.GeneralExperience = generalExperience;
-                                GetEventProgressesOfParticipant(participant);
                                 return participant;
                             }
                             else if (userType == User.UserType.Coach)
@@ -361,154 +360,19 @@ namespace BP3_Casus_console.Users.Service
             return null;
         }
 
-        public void GetEventProgressesOfParticipant(Participant participant)
+        public void GetUserIdByUsername(string username)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                string query = "SELECT * FROM EventProgresses WHERE UserId = @UserId";
+                string query = "SELECT UserID FROM Users WHERE Username = @Username";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@UserId", participant.ID);
-
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            int eventId = reader.GetInt32(reader.GetOrdinal("EventId"));
-                            int level = reader.GetInt32(reader.GetOrdinal("Level"));
-                            float experience = (float)reader.GetDouble(reader.GetOrdinal("Experience"));
-
-                            EventTypeProgress eventProgress = new EventTypeProgress(eventId, participant.ID);
-                            eventProgress.Level = level;
-                            eventProgress.Experience = experience;
-
-                            participant.EventProgresses.Add(eventProgress);
-                        }
-                    }
-                }
-            }
-        }
-
-        public void InsertRequest(FriendRequest friendRequest)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                string query = "INSERT INTO FriendRequests (SenderUserID, RecieverUserID, RequestDate, Status) VALUES (@SenderUserID, @RecieverUserID, @RequestDate, @Status)";
-
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@SenderUserID", friendRequest.SenderUserId);
-                    command.Parameters.AddWithValue("@RecieverUserID", friendRequest.ReceiverUserId);
-                    command.Parameters.AddWithValue("@RequestDate", friendRequest.RequestDate);
-                    command.Parameters.AddWithValue("@Status", friendRequest.Status.ToString());
+                    command.Parameters.AddWithValue("@Username", username);
 
                     command.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public void UpdateRequestStatus(FriendRequest friendRequest)
-        {  
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                string query = "UPDATE FriendRequests SET Status = @Status WHERE RequestId = @RequestId";
-
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@RequestId", friendRequest.RequestId);
-                    command.Parameters.AddWithValue("@Status", friendRequest.Status.ToString());
-
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public List<FriendRequest> FriendRequestList(int userID)
-        {
-            List<FriendRequest> friends = new List<FriendRequest>();
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                string query = "SELECT * FROM FriendRequests WHERE RecieverUserID IN (SELECT UserId FROM Users WHERE UserId = @UserID)";
-
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@UserID", userID);
-
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            string statusString = reader["status"].ToString();
-                            FriendRequestStatus status = (FriendRequestStatus)Enum.Parse(typeof(FriendRequestStatus), statusString);
-                            FriendRequest @friend = new FriendRequest(0, (int)reader["SenderUserId"], (int)reader["RecieverUserID"], (DateTime)reader["Date"], status);
-                            @friend.RequestId = (int)reader["ID"];
-                            friends.Add(@friend);
-
-                        }
-                    }
-                }
-            }
-            return friends;
-        }
-
-        public List<UserRelationship> FriendsList(int userID)
-        {
-            List<UserRelationship> friendsList = new List<UserRelationship>();
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                string query = "SELECT * FROM UserRelations WHERE UserID IN (SELECT UserId FROM Users WHERE UserId = @UserID)";
-
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@UserID", userID);
-
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            string typeString = reader["Type"].ToString();
-                            RelationshipType type = (RelationshipType)Enum.Parse(typeof(RelationshipType), typeString);
-                            UserRelationship @friend = new UserRelationship((int)reader["UserID"], (int)reader["User2ID"], type);
-                            @friend.UserId1 = (int)reader["ID"];
-                            friendsList.Add(@friend);
-
-                        }
-                    }
-                }
-            }
-            return friendsList;
-        }
-
-        public void InsertUserRelation(UserRelationship userRelationship)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                string query = "INSERT INTO UserRelations (UserID, User2ID, Type) VALUES (@UserID, @User2ID, @Type)";
-
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@UserID", userRelationship.UserId1);
-                    command.Parameters.AddWithValue("@User2ID", userRelationship.UserId2);
-                    command.Parameters.AddWithValue("@Type", userRelationship.Relationship);
-
-                    command.ExecuteNonQuery();
-
-
                 }
             }
         }
