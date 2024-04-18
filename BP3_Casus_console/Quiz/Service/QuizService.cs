@@ -47,17 +47,23 @@ namespace BP3_Casus_console.Quiz.Service
 
             foreach (string answer in answers)
             {
-                if (answer == "Ik wil meer conditie opbouwen." || answer == "Ik wil meer flexibiliteit." || answer == "Ik wil meer kracht opbouwen.")
+                if (answer == "Ik wil meer conditie opbouwen." /*|| answer == "Ik wil meer flexibiliteit." || answer == "Ik wil meer kracht opbouwen."*/)
                 {
-                    tags.Add("Fitness");
+                    tags.Add("Conditie");
                 }
-                else if (answer == "Ik wil mezelf kunnen verdedigen.")
+                else if (answer == "Ik wil meer flexibiliteit")
                 {
-                    tags.Add("Vechtsport");
+                    tags.Add("Flexibiliteit");
+
+                }
+                else if (answer == "Ik wil meer kracht opbouwen.")
+                {
+                    tags.Add("Kracht");
+
                 }
                 else if (answer == "Ik wil meer bewegen in het algemeen.")
                 {
-                    tags.Add("Algemeen");
+                    tags.Add("Bewegen");
                 }
                 else if (answer == "Vechtsport")
                 {
@@ -65,19 +71,19 @@ namespace BP3_Casus_console.Quiz.Service
                 }
                 else if (answer == "Krachttraining")
                 {
-                    tags.Add("Fitness");
+                    tags.Add("Kracht");
                 }
                 else if (answer == "Cardio")
                 {
-                    tags.Add("Fitness");
+                    tags.Add("Conditie");
                 }
                 else if (answer == "Mindful bewegen")
                 {
-                    tags.Add("Mindfulness");
+                    tags.Add("Mindful");
                 }
                 else if (answer == "Teamsport")
                 {
-                    tags.Add("Teamsport");
+                    tags.Add("Team");
                 }
             }
 
