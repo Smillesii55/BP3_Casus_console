@@ -100,14 +100,11 @@ if (CurrentUser.Type == User.UserType.Coach)
         Console.WriteLine();
         Console.WriteLine("1. View profile");
         Console.WriteLine("2. Edit profile");
-        Console.WriteLine("3. View friends");
-        Console.WriteLine("4. Add friend");
-        Console.WriteLine("5. Remove friend");
-        Console.WriteLine("6. View events");
-        Console.WriteLine("7. Create event");
-        Console.WriteLine("8. Edit event");
-        Console.WriteLine("9. Delete event");
-        Console.WriteLine("10. Exit");
+        Console.WriteLine("3. View events");
+        Console.WriteLine("4. Create event");
+        Console.WriteLine("5. Edit event");
+        Console.WriteLine("6. Delete event");
+        Console.WriteLine("7. Exit");
         Console.WriteLine();
         Console.Write("Select an option: ");
         string input = Console.ReadLine();
@@ -124,25 +121,17 @@ if (CurrentUser.Type == User.UserType.Coach)
                 ViewFriends();
                 break;
             case "4":
-                //AddFriend();
-                break;
-            case "5":
-                //RemoveFriend();
-                break;
-            case "6":
                 //ViewEvents();
                 break;
-            case "7":
-                //CreateEvent();
+            case "5":
+                //CreateEcent();
                 break;
-            case "8":
+            case "6":
                 //EditEvent();
                 break;
-            case "9":
+            case "7":
                 //DeleteEvent();
                 break;
-            case "10":
-                return;
             default:
                 Console.WriteLine("Invalid input. Press any key to try again.");
                 Console.ReadKey();
@@ -159,11 +148,14 @@ else if (CurrentUser.Type == User.UserType.Participant)
         Console.WriteLine();
         Console.WriteLine("1. View profile");
         Console.WriteLine("2. Edit profile");
+
         Console.WriteLine("3. View friends");
-        Console.WriteLine("4. Add friend");
-        Console.WriteLine("5. Remove friend");
-        Console.WriteLine("6. View events");
-        Console.WriteLine("7. Participate in event");
+        Console.WriteLine("4. View friendRequests");
+        Console.WriteLine("5. Add friend");
+        Console.WriteLine("6. Remove friend");
+
+        Console.WriteLine("7. View events");
+        Console.WriteLine("8. Participate in event");
         Console.WriteLine("8. Exit");
         Console.WriteLine();
         Console.Write("Select an option: ");
@@ -181,18 +173,21 @@ else if (CurrentUser.Type == User.UserType.Participant)
                 ViewFriends();
                 break;
             case "4":
-                //AddFriend();
+                ViewFriendRequest();
                 break;
             case "5":
-                //RemoveFriend();
+                AddFriend();
                 break;
             case "6":
-                //ViewEvents();
+                RemoveFriend();
                 break;
             case "7":
-                //ParticipateInEvent();
+                //ViewEvents();
                 break;
             case "8":
+                //ParticipateInEvent();
+                return;
+            case "9":
                 return;
             default:
                 Console.WriteLine("Invalid input. Press any key to try again.");
@@ -259,14 +254,13 @@ void EditProfile()
     Console.WriteLine("Profile updated. Press any key to return.");
     Console.ReadKey();
 }
-
 void ViewFriends()
 {
     FriendService friendService = FriendService.Instance;
-    List<User> friends = friendService.GetFriendsList(CurrentUser.ID);
 
     Console.Clear();
     Console.WriteLine("Friends");
+    List<User> friends = friendService.GetFriendsList(CurrentUser.ID);
     Console.WriteLine();
 
     if (friends.Count == 0)
@@ -285,7 +279,40 @@ void ViewFriends()
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
-/*
+void ViewFriendRequest()
+{
+    FriendService friendService = FriendService.Instance;
+    UserService userService = UserService.Instance;
+    Console.Clear();
+
+    Console.WriteLine("Friendrequest list");
+    List<User> friends = friendService.GetFriendRequestList(CurrentUser.ID);
+
+    Console.WriteLine("Choose the friendrequest you want to accept or decline: ");
+    int requestID = Convert.ToInt32(Console.ReadLine());
+
+    Console.WriteLine("1: Accept");
+    Console.WriteLine("2: Decline");
+    string answer = Console.ReadLine();
+
+    if (answer == "1")
+    {
+        friendService.AcceptFriendRequest(requestID);
+        //friendService.Friend(CurrentUser.ID);
+
+    }
+    else if (answer == "2")
+    {
+        friendService.DeclineFriendRequest(requestID);
+    }
+
+    //Make sure you can see the name of the reciever en sender instead of the ID.
+
+    Console.WriteLine(friends);
+
+
+    Console.ReadKey();
+}
 void AddFriend()
 {
     FriendService friendService = FriendService.Instance;
@@ -298,6 +325,7 @@ void AddFriend()
     string friendUsername = Console.ReadLine();
 
     User? friend = userService.GetUserProdileByUsername(friendUsername);
+    friendService.GetId(friendUsername);
 
     if (friend == null)
     {
@@ -348,7 +376,7 @@ void RemoveFriend()
     }
     else
     {
-        // Remove friend
+        friendService.DeclineFriendRequest(friend.ID);
         Console.WriteLine("Friend removed.");
     }
 
@@ -356,6 +384,7 @@ void RemoveFriend()
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
+/*
 void ViewEvents()
 {
     EventService eventService = EventService.Instance;

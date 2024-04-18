@@ -1,20 +1,28 @@
-﻿using BP3_Casus_console.Users.Friends;
+﻿using BP3_Casus_console.Events.Service;
+using BP3_Casus_console.Events;
+using BP3_Casus_console.Users.Friends;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static BP3_Casus_console.Users.Friends.FriendRequest;
+using System.Transactions;
+using BP3_Casus_console.Users.Service;
+using static BP3_Casus_console.Users.Friends.UserRelationship;
+
 
 namespace BP3_Casus_console.Users.Service
 {
     public class FriendService
     {
-        UserDataAccesLayer UserDataAccesLayer = UserDataAccesLayer.Instance;
+        FriendDataAccesLayer FriendDataAccesLayer = FriendDataAccesLayer.Instance;
+        UserService userService = UserService.Instance;
 
         private FriendService()
         {
         }
+
+        List<FriendRequest> friendRequestList = new List<FriendRequest>();
 
         private static FriendService? instance = null;
         public static FriendService Instance
@@ -31,58 +39,62 @@ namespace BP3_Casus_console.Users.Service
 
         public void SendFriendRequest(int senderUserId, int receiverUserId)
         {
-            List<FriendRequest> sendFriendRequest = new List<FriendRequest>();
-
-            //Blackbox.Ai
             DateTime requestDate = DateTime.Now;
-            FriendRequestStatus status = FriendRequestStatus.Pending;
+            FriendRequest.FriendRequestStatus status = FriendRequest.FriendRequestStatus.Pending;
 
             FriendRequest friendRequest = new FriendRequest(0, senderUserId, receiverUserId, requestDate, status);
-            sendFriendRequest.Add(friendRequest);
 
-            // Create a new FriendRequest object
-            // Set its properties (sender, receiver, status = Pending, etc.)
-            // Save the friend request to the database
+            FriendDataAccesLayer.InsertRequest(friendRequest);
+            friendRequestList.Add(friendRequest);
         }
 
         public void AcceptFriendRequest(int requestId)
         {
-            List<FriendRequest> friendRequests = new List<FriendRequest>();
-            List<UserRelationship> userRelationships = new List<UserRelationship>();
 
-            DateTime requestDate = DateTime.Now;
-            FriendRequestStatus status = FriendRequestStatus.Accepted;
-
-            FriendRequest friendRequest = new FriendRequest(requestId, 0, 0, requestDate, status);
-            friendRequests.Add(friendRequest); 
-
-            UserRelationship userRelationship = new UserRelationship();
-            userRelationships.Add(userRelationship);
-            
-            // Retrieve the request by requestId
-            // Change its status to Accepted
-            // Create a new UserRelationship and save it
-            // Save changes to the database
         }
 
         public void DeclineFriendRequest(int requestId)
         {
-            List<FriendRequest> declineFriendRequest = new List<FriendRequest>();
-            DateTime requestDate = DateTime.Now;
-            FriendRequestStatus status = FriendRequestStatus.Declined;
 
-            FriendRequest friendRequest = new FriendRequest(requestId, 0, 0, requestDate, status);
-            declineFriendRequest.Add(friendRequest);
-            // Retrieve the request by requestId
-            // Change its status to Declined
-            // Save changes to the database
         }
 
-        public List<User> GetFriendsList(int userId)
+        public List<User> GetFriendRequestList(int userID)
+        {
+            List<User> friendRequestList = new List<User>();
+
+            List<FriendRequest> requests = FriendDataAccesLayer.FriendRequestList(userID);
+
+            foreach (FriendRequest request in requests)
+            {
+                User user = userService.GetUserProfileById(request.SenderUserId);
+                friendRequestList.Add(user);
+            }
+
+            return friendRequestList;
+        }
+
+        public List<User> GetFriendsList(int userID)
+        {
+            List<User> friendsList = new List<User>();
+
+            List<UserRelationship> friends = FriendDataAccesLayer.FriendsList(userID);
+
+            foreach (UserRelationship friend in friends)
+            {
+                User user = userService.GetUserProfileById(friend.UserId2);
+                friendsList.Add(user);
+            }
+
+            return friendsList;
+        }
+
+        public void GetId(string username)
+        {
+        }
+
+        public void UpdateState(int userId1, int userId2, RelationshipType type)
         {
 
-            // Retrieve and return a list of User objects representing the friends of the specified user
-            return new List<User>(); // Placeholder
         }
     }
 }
