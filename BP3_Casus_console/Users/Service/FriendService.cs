@@ -64,11 +64,10 @@ namespace BP3_Casus_console.Users.Service
 
             RelationshipType relationship = RelationshipType.Friend;
 
-            UserRelationship userRelationship = new UserRelationship(0, 0, relationship);
+            UserRelationship userRelationship = new UserRelationship (0, 0, relationship);
             userRelationships.Add(userRelationship);
 
             UserDataAccesLayer.UpdateRequestStatus(friendRequest);
-            UserDataAccesLayer.InsertUserRelationship(userRelationship);
 
             // Retrieve the request by requestId
             // Change its status to Accepted
@@ -92,7 +91,7 @@ namespace BP3_Casus_console.Users.Service
             // Save changes to the database
         }
 
-        public List<User> GetFriendsList(int userID)
+        public List<User> GetFriendsList(int userID)    
         {
             List<FriendRequest> friends = UserDataAccesLayer.FriendRequestList(userID);
             foreach (FriendRequest friend in friends)
@@ -109,14 +108,31 @@ namespace BP3_Casus_console.Users.Service
             
         }
 
-        public List<User> GetFriendsList()
+        public List<User> FriendsList(int userID)
         {
+            List<UserRelationship> friendsList = UserDataAccesLayer.FriendsList(userID);
+            foreach (UserRelationship friend in friendsList)
+            {
+                Console.WriteLine("Friend Details:");
+                Console.WriteLine("Sender ID: " + friend.UserId1);
+                Console.WriteLine("Receiver ID: " + friend.UserId2);
+                Console.WriteLine("Relationship: " + friend.Relationship);
+            }
             return new List<User>();
         }
 
         public void GetId(string username)
         {
             UserDataAccesLayer.GetIdByUsername(username);
+        }
+
+        public void Friend(int userId1)
+        {
+            RelationshipType type = RelationshipType.Friend;
+
+            UserRelationship userRelationship = new UserRelationship(userId1, 0, type);
+
+            UserDataAccesLayer.InsertUserRelation(userRelationship);
         }
     }
 }

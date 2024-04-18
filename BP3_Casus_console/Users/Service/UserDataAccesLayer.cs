@@ -368,13 +368,13 @@ namespace BP3_Casus_console.Users.Service
             {
                 connection.Open();
 
-                string query = "INSERT INTO FriendRequests (SenderUserID, RecieverUserID, RequestDate, Status) VALUES (@SenderUserID, @RecieverUserID, @RequestDate, @Status)";
+                string query = "INSERT INTO FriendRequests (SenderUserID, RecieverUserID, Date, Status) VALUES (@SenderUserID, @RecieverUserID, @Date, @Status)";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@SenderUserID", friendRequest.SenderUserId);
                     command.Parameters.AddWithValue("@RecieverUserID", friendRequest.ReceiverUserId);
-                    command.Parameters.AddWithValue("@RequestDate", friendRequest.RequestDate);
+                    command.Parameters.AddWithValue("@Date", friendRequest.RequestDate);
                     command.Parameters.AddWithValue("@Status", friendRequest.Status);
 
                         command.ExecuteNonQuery();
@@ -439,7 +439,7 @@ namespace BP3_Casus_console.Users.Service
                         {
                             string statusString = reader["status"].ToString();
                             FriendRequestStatus status = (FriendRequestStatus)Enum.Parse(typeof(FriendRequestStatus), statusString);
-                            FriendRequest @friend = new FriendRequest(0, (int)reader["SenderUserId"], (int)reader["RecieverUserID"], (DateTime)reader["RequestDate"], status);
+                            FriendRequest @friend = new FriendRequest(0, (int)reader["SenderUserId"], (int)reader["RecieverUserID"], (DateTime)reader["Date"], status);
                             @friend.RequestId = (int)reader["ID"];
                             friends.Add(@friend);
 
@@ -458,7 +458,7 @@ namespace BP3_Casus_console.Users.Service
             {
                 connection.Open();
 
-                string query = "SELECT * FROM UserRelations WHERE UserID1 IN (SELECT UserId FROM Users WHERE UserId = @UserID)";
+                string query = "SELECT * FROM UserRelations WHERE UserID IN (SELECT UserId FROM Users WHERE UserId = @UserID)";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -468,8 +468,9 @@ namespace BP3_Casus_console.Users.Service
                     {
                         while (reader.Read())
                         {
-
-                            UserRelationship @friend = new UserRelationship((int)reader["UserId1"], (int)reader["UserId2"], (RelationshipType)reader["Relationship"]);
+                            string typeString = reader["Type"].ToString();   
+                            RelationshipType type = (RelationshipType)Enum.Parse(typeof(RelationshipType), typeString);
+                            UserRelationship @friend = new UserRelationship((int)reader["UserID"], (int)reader["User2ID"], type);
                             @friend.UserId1 = (int)reader["ID"];
                             friendsList.Add(@friend);
 
@@ -479,7 +480,28 @@ namespace BP3_Casus_console.Users.Service
             }
             return friendsList;
         }
-       
 
+        public void InsertUserRelation(UserRelationship userRelationship)
+        {
+            //Enkele entiteit aanmaken
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "INSERT INTO UserRelations (UserID, User2ID, Type) VALUES (@UserID, @User2ID, @Type)";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserID", userRelationship.UserId1);
+                    command.Parameters.AddWithValue("@User2ID", userRelationship.UserId2);
+                    command.Parameters.AddWithValue("@Type", userRelationship.Relationship);
+
+                    command.ExecuteNonQuery();
+
+
+                }
+            }
+        }
     }
 }

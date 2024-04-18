@@ -140,10 +140,10 @@ void EditProfile()
 void ViewFriends()
 {
     FriendService friendService = FriendService.Instance;
-    List<User> friends = friendService.GetFriendsList(CurrentUser.ID);
 
     Console.Clear();
     Console.WriteLine("Friends");
+    List<User> friends = friendService.FriendsList(CurrentUser.ID);
     Console.WriteLine();
 
     if (friends.Count == 0)
@@ -180,12 +180,13 @@ void ViewFriendRequest()
 
     if (answer == "1")
     {
-        //Werkt. Er staat in de Database Accepted
-        friendService.AcceptFriendRequest(CurrentUser.ID);
+        friendService.AcceptFriendRequest(requestID);
+        friendService.Friend(CurrentUser.ID);
+
     }
     else if (answer == "2")
     {
-        friendService.DeclineFriendRequest(CurrentUser.ID);
+        friendService.DeclineFriendRequest(requestID);
     }
 
     //Make sure you can see the name of the reciever en sender instead of the ID.
