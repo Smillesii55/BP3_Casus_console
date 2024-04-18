@@ -61,7 +61,7 @@ namespace BP3_Casus_console.Users.Service
             return friends;
         }
 
-        public List<UserRelationship> FriendsList(int userID, int userID2)
+        public List<UserRelationship> FriendsList(int userID)
         {
             List<UserRelationship> friendsList = new List<UserRelationship>();
 

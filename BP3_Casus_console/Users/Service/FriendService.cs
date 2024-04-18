@@ -64,7 +64,6 @@ namespace BP3_Casus_console.Users.Service
             FriendDataAccesLayer.UpdateRequestStatus(friendRequest);
             FriendDataAccesLayer.InsertUserRelation(userRelationship);
 
-
         }
 
         public void DeclineFriendRequest(int requestId)

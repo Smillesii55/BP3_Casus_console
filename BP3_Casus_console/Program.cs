@@ -298,6 +298,7 @@ void ViewFriendRequest()
     {
         friendService.AcceptFriendRequest(requestID);
 
+
     }
     else if (answer == "2")
     {
