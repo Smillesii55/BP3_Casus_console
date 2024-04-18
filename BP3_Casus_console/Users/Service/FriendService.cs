@@ -50,7 +50,7 @@ namespace BP3_Casus_console.Users.Service
 
         public void AcceptFriendRequest(int requestId)
         {
-
+            
         }
 
         public void DeclineFriendRequest(int requestId)
@@ -70,6 +70,17 @@ namespace BP3_Casus_console.Users.Service
                 friendRequestList.Add(user);
             }
 
+            foreach (FriendRequest friend in requests)
+            {
+                Console.WriteLine("Friend Request Details:");
+                Console.WriteLine("Request ID: " + friend.RequestId);
+                Console.WriteLine("Sender ID: " + friend.SenderUserId);
+                Console.WriteLine("Receiver ID: " + friend.ReceiverUserId);
+                Console.WriteLine("Request Date: " + friend.RequestDate);
+                Console.WriteLine("Status: " + friend.Status);
+                Console.WriteLine();
+            }
+
             return friendRequestList;
         }
 
@@ -83,6 +94,14 @@ namespace BP3_Casus_console.Users.Service
             {
                 User user = userService.GetUserProfileById(friend.UserId2);
                 friendsList.Add(user);
+            }
+
+            foreach (UserRelationship friend in friends)
+            {
+                Console.WriteLine("Friend Details:");
+                Console.WriteLine("Sender ID: " + friend.UserId1);
+                Console.WriteLine("Receiver ID: " + friend.UserId2);
+                Console.WriteLine("Relationship: " + friend.Relationship);
             }
 
             return friendsList;
