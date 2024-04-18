@@ -121,16 +121,16 @@ if (CurrentUser.Type == User.UserType.Coach)
                 ViewFriends();
                 break;
             case "4":
-                //ViewEvents();
+                ViewEvents();
                 break;
             case "5":
-                //CreateEcent();
+                CreateEvent();
                 break;
             case "6":
-                //EditEvent();
+                EditEvent();
                 break;
             case "7":
-                //DeleteEvent();
+                DeleteEvent();
                 break;
             default:
                 Console.WriteLine("Invalid input. Press any key to try again.");
@@ -182,10 +182,10 @@ else if (CurrentUser.Type == User.UserType.Participant)
                 RemoveFriend();
                 break;
             case "7":
-                //ViewEvents();
+                ViewEvents();
                 break;
             case "8":
-                //ParticipateInEvent();
+                ParticipateInEvent();
                 return;
             case "9":
                 return;
