@@ -155,7 +155,7 @@ else if (CurrentUser.Type == User.UserType.Participant)
 
         Console.WriteLine("7. View events");
         Console.WriteLine("8. Participate in event");
-        Console.WriteLine("8. Exit");
+        Console.WriteLine("9. Exit");
         Console.WriteLine();
         Console.Write("Select an option: ");
         string input = Console.ReadLine();
