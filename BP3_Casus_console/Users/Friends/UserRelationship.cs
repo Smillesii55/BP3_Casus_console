@@ -17,5 +17,12 @@ namespace BP3_Casus_console.Users.Friends
             Friend,
             Blocked
         }
+
+        public UserRelationship(int userId1, int userId2, RelationshipType relationship)
+        {
+            UserId1 = userId1;
+            UserId2 = userId2;
+            Relationship = relationship;
+        }
     }
 }

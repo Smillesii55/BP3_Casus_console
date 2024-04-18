@@ -90,6 +90,7 @@ namespace BP3_Casus_console.Users.Service
                 }
             }
             return friendsList;
+            
         }
 
         public void InsertUserRelation(UserRelationship userRelationship)
