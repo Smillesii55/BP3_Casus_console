@@ -27,12 +27,12 @@ namespace BP3_Casus_console.Users
             Expertise = expertise;
         }
         
-
-        public void GradeParticipantForEvent(Participant participant, Event @event, int grade = 6)
+        // KLOPT NIET MEER!
+        public void GradeParticipantForEvent(Participant participant, EventType @event, int grade = 6)
         {
             double expGained = @event.ExpPerParticipant * (grade / 10.0);
             participant.GainGeneralExperience((expGained / 2));
-            EventProgress? progress = participant.EventProgresses.FirstOrDefault(p => p.EventID == @event.ID);
+            EventTypeProgress? progress = participant.EventProgresses.FirstOrDefault(p => p.ID == @event.ID);
             if (progress != null)
             {
                 progress.GainExperience(expGained);

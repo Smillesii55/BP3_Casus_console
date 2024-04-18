@@ -381,7 +381,7 @@ namespace BP3_Casus_console.Users.Service
                             int level = reader.GetInt32(reader.GetOrdinal("Level"));
                             float experience = (float)reader.GetDouble(reader.GetOrdinal("Experience"));
 
-                            EventProgress eventProgress = new EventProgress(eventId, participant.ID);
+                            EventTypeProgress eventProgress = new EventTypeProgress(eventId, participant.ID);
                             eventProgress.Level = level;
                             eventProgress.Experience = experience;
 

@@ -29,80 +29,71 @@ namespace BP3_Casus_console.Events.Service
             }
         }
 
-        public Event CreateEvent(string name, double expPerParticipant)
+
+
+        public void AddEventOfType(Coach coach, DateTime Date, int MaxParticipants, EventType eventType)
         {
-            Event newEvent = new Event(name, expPerParticipant);
-            eventDataAccesLayer.InsertEvent(newEvent);
-            return newEvent;
+            Event @event = new Event(coach, Date, MaxParticipants);
+            @event.EventType = eventType;
+            eventDataAccesLayer.InsertEvent(@event);
         }
-        public void UpdateEvent(Event updatedEvent)
+        public void AddParticipantToEvent(Event eventToAddParticipant, List<Participant> participants)
         {
-            eventDataAccesLayer.UpdateEvent(updatedEvent);
+            eventToAddParticipant.Participants.AddRange(participants);
+            eventDataAccesLayer.UpdateEvent(eventToAddParticipant);
         }
-        public void DeleteEvent(Event eventToDelete)
+        public void RemoveParticipantFromEvent(Event eventToRemoveParticipant, Participant participant)
         {
-            eventDataAccesLayer.DeleteEvent(eventToDelete);
+            eventToRemoveParticipant.Participants.Remove(participant);
+            eventDataAccesLayer.UpdateEvent(eventToRemoveParticipant);
+        }
+        public void UpdateEvent(Event eventToUpdate)
+        {
+            eventDataAccesLayer.UpdateEvent(eventToUpdate);
+        }
+        public void RemoveEvent(Event eventToRemove)
+        {
+            eventDataAccesLayer.DeleteEvent(eventToRemove);
+        }
+        public Event? GetEventByName(string name)
+        {
+            return eventDataAccesLayer.GetEventByName(name);
         }
 
-        public Event GetEventById(int eventId)
+
+
+        public void AddEventType(string name, string description, double expPerParticipant)
         {
-            Event? eventToGet = eventDataAccesLayer.GetEventById(eventId);
-            if (eventToGet != null)
-            {
-                return eventToGet;
-            }
-            else
-            {
-                return null;
-            }
+            EventType eventType = new EventType(name, description, expPerParticipant);
+            eventDataAccesLayer.InsertEventType(eventType);
         }
-        public Event GetEventByName(string eventName)
+        public void UpdateEventType(EventType eventType)
         {
-            Event? eventToGet = eventDataAccesLayer.GetEventByName(eventName);
-            if (eventToGet != null)
-            {
-                return eventToGet;
-            }
-            else
-            {
-                return null;
-            }
-        } 
-        
-        public List<Event> GetEventsByTag(string tag)
-        {
-            List<Event>? events = eventDataAccesLayer.GetEventsByTag(tag);
-            if (events != null)
-            {
-                return events;
-            }
-            else
-            {
-                return new List<Event>();
-            }
+            eventDataAccesLayer.UpdateEventType(eventType);
         }
-        public List<Event> GetEvents()
+        public void RemoveEventType(EventType eventType) 
         {
-            List<Event>? events = eventDataAccesLayer.GetEvents();
-            if (events != null)
-            {
-                return events;
-            }
-            else
-            {
-                return new List<Event>();
-            }
+            eventDataAccesLayer.DeleteEventType(eventType);
+        }
+        public EventType? GetEventTypeByName(string name)
+        {
+            return eventDataAccesLayer.GetEventTypeByName(name);
         }
 
-        public void AddTagToEvent(Event @event, string tag)
+
+
+        public List<Event> GetAllEvents()
         {
-            @event.Tags.Add(tag);
-            UpdateEvent(@event);
+            return eventDataAccesLayer.GetAllEvents();
         }
-        public void RemoveTagFromEvent(Event @event, string tag)
+        public List<EventType> GetAllEventTypes() 
         {
-            @event.Tags.Remove(tag);
-            UpdateEvent(@event);
+            return eventDataAccesLayer.GetAllEventTypes();
+        }
+
+        public EventType GetEventTypeByID(int id)
+        {
+            return eventDataAccesLayer.GetEventTypeById(id);
         }
     }
 }

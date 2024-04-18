@@ -8,20 +8,17 @@ using System.Threading.Tasks;
 
 namespace BP3_Casus_console.Events
 {
-    public class EventProgress
+    public class EventTypeProgress
     {
-        public int EventID { get; set; }
+        public int ID { get; set; }
+        public int EventTypeID { get; set; }
         public int UserID { get; set; }
         public int Level { get; set; }
         public double Experience { get; set; } = 0;
 
-        public Event @event { get; set; }
-
-        EventService EventService = EventService.Instance;
-        public EventProgress(int eventID, int userID)
+        public EventTypeProgress(int eventTypeID, int userID)
         {
-            EventID = eventID;
-            @event = EventService.GetEventById(eventID);
+            EventTypeID = eventTypeID;
             UserID = userID;
         }
 
