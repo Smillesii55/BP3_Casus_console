@@ -303,6 +303,10 @@ void ViewFriendRequest()
     {
         friendService.DeclineFriendRequest(requestID);
     }
+    else
+    {
+        return;
+    }
 
     //Make sure you can see the name of the reciever en sender instead of the ID.
 

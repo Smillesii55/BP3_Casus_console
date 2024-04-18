@@ -61,7 +61,7 @@ namespace BP3_Casus_console.Users.Service
             return friends;
         }
 
-        public List<UserRelationship> FriendsList(int userID)
+        public List<UserRelationship> FriendsList(int userID, int userID2)
         {
             List<UserRelationship> friendsList = new List<UserRelationship>();
 
@@ -145,6 +145,26 @@ namespace BP3_Casus_console.Users.Service
                     command.Parameters.AddWithValue("@RecieverUserID", friendRequest.ReceiverUserId);
                     command.Parameters.AddWithValue("@Date", friendRequest.RequestDate);
                     command.Parameters.AddWithValue("@Status", friendRequest.Status);
+
+                    command.ExecuteNonQuery();
+
+
+                }
+            }
+        }
+
+        public void RemoveRequest(FriendRequest friendRequest)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "DELETE FROM FriendRequests WHERE ID = @ID";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserID", friendRequest.RequestId);
+
 
                     command.ExecuteNonQuery();
 
