@@ -69,7 +69,7 @@ namespace BP3_Casus_console.Users.Service
             {
                 connection.Open();
 
-                string query = "SELECT * FROM UserRelations WHERE UserID = @UserId AND  Type = @Type";
+                string query = "SELECT * FROM UserRelations WHERE UserID = @UserId AND  Type = @Type OR @UserId = @UserId AND Type = @Type";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
