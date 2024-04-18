@@ -12,6 +12,7 @@ namespace BP3_Casus_console.Quiz
         public List<QuizChoice> SelectedChoices { get; set; } = new List<QuizChoice>();
 
         // Logic to analyze results and recommend activities
+        /*
         public List<Event> RecommendEvents(List<Event> allEvents)
         {
             var tags = SelectedChoices.SelectMany(choice => choice.EventTags).ToList();
@@ -21,5 +22,6 @@ namespace BP3_Casus_console.Quiz
 
             return recommendedEvents;
         }
+        */
     }
 }

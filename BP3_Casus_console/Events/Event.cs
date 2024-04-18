@@ -9,8 +9,10 @@ namespace BP3_Casus_console.Events
 {
     public class Event
     {
+
         public int ID { get; set; }
-        public int EventTypeID { get; set; }  // Verwijzing naar EventType
+
+        public EventType EventType { get; set; }
         public DateTime Date { get; set; }
         public int MaxParticipants { get; set; }
 
@@ -18,7 +20,7 @@ namespace BP3_Casus_console.Events
         public List<Participant> Participants { get; set; } = new List<Participant>();
 
 
-        public Event(Coach coach, double expPerParticipant, DateTime Date, int MaxParticipants)
+        public Event(Coach coach, DateTime Date, int MaxParticipants)
         {
             Coach = coach;
             this.Date = Date;

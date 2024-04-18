@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using BP3_Casus_console.Users;
 using BP3_Casus_console.Users.Service;
+using BP3_Casus_console.Events;
 
 namespace BP3_Casus_console.Events.Service
 {
@@ -56,7 +57,7 @@ namespace BP3_Casus_console.Events.Service
                     command.Parameters.AddWithValue("@Date", @event.Date);
                     command.Parameters.AddWithValue("@MaxParticipants", @event.MaxParticipants);
                     command.Parameters.AddWithValue("@Participants", @event.Participants.Count);
-                    command.Parameters.AddWithValue("@EventTypeId", @event.EventTypeID);
+                    command.Parameters.AddWithValue("@EventTypeId", @event.EventType.ID);
                     command.ExecuteNonQuery();
                 }
             }
@@ -153,7 +154,7 @@ namespace BP3_Casus_console.Events.Service
                     command.Parameters.AddWithValue("@Date", @event.Date);
                     command.Parameters.AddWithValue("@MaxParticipants", @event.MaxParticipants);
                     command.Parameters.AddWithValue("@Participants", @event.Participants.Count);
-                    command.Parameters.AddWithValue("@EventTypeId", @event.EventTypeID);
+                    command.Parameters.AddWithValue("@EventTypeId", @event.EventType.ID);
                     command.Parameters.AddWithValue("@EventId", @event.ID);
                     command.ExecuteNonQuery();
                 }
@@ -315,10 +316,10 @@ namespace BP3_Casus_console.Events.Service
                     {
                         if (reader.Read())
                         {
-                            Event @event = new Event(coach, eventType.ExpPerParticipant, (DateTime)reader["Date"], (int)reader["MaxParticipants"]);
+                            Event @event = new Event(coach, (DateTime)reader["Date"], (int)reader["MaxParticipants"]);
                             @event.ID = eventId;
                             @event.Participants = participants;
-                            @event.EventTypeID = eventType.ID;
+                            @event.EventType = GetEventTypeByEventId((int)reader["EventTypeId"]);
                             return @event;
                         }
                         else
@@ -349,10 +350,10 @@ namespace BP3_Casus_console.Events.Service
                     {
                         if (reader.Read())
                         {
-                            Event @event = new Event(coach, eventType.ExpPerParticipant, (DateTime)reader["Date"], (int)reader["MaxParticipants"]);
+                            Event @event = new Event(coach, (DateTime)reader["Date"], (int)reader["MaxParticipants"]);
                             @event.ID = (int)reader["EventId"];
                             @event.Participants = participants;
-                            @event.EventTypeID = eventType.ID;
+                            @event.EventType = GetEventTypeByEventId((int)reader["EventTypeId"]);
                             return @event;
                         }
                         else
@@ -401,7 +402,7 @@ namespace BP3_Casus_console.Events.Service
                         if (reader.Read())
                         {
                             EventType eventType = new EventType((string)reader["Name"], (string)reader["Description"], (double)reader["ExpPerParticipant"]);
-                            eventType.ID = (int)reader["EventTypeId"];
+                            eventType.ID = (int)reader["Id"];
                             return eventType;
                         }
                         else
@@ -488,7 +489,7 @@ namespace BP3_Casus_console.Events.Service
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("SELECT * FROM EventParticipants WHERE EventId = @EventId", connection))
+                using (SqlCommand command = new SqlCommand("SELECT * FROM EventParticipants WHERE Id = @EventId", connection))
                 {
                     command.Parameters.AddWithValue("@EventId", GetEventByName(eventName).ID);
                     using (SqlDataReader reader = command.ExecuteReader())
@@ -508,14 +509,14 @@ namespace BP3_Casus_console.Events.Service
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE EventId = @EventId", connection))
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Id = @EventId", connection))
                 {
                     command.Parameters.AddWithValue("@EventId", evenId);
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            return GetEventTypeById((int)reader["EventTypeId"]);
+                            return GetEventTypeById((int)reader["Id"]);
                         }
                         else
                         {
@@ -530,7 +531,7 @@ namespace BP3_Casus_console.Events.Service
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE EventId = @EventId", connection))
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Id = @EventId", connection))
                 {
                     command.Parameters.AddWithValue("@EventId", eventId);
                     using (SqlDataReader reader = command.ExecuteReader())
@@ -552,7 +553,7 @@ namespace BP3_Casus_console.Events.Service
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE EventId = @EventId", connection))
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events WHERE Id = @EventId", connection))
                 {
                     command.Parameters.AddWithValue("@EventId", GetEventByName(eventName).ID);
                     using (SqlDataReader reader = command.ExecuteReader())
@@ -591,13 +592,52 @@ namespace BP3_Casus_console.Events.Service
             }
         }
 
-        public List<EventType> GetEventTypes()
+        public List<EventType>? GetAllEventTypes()
         {
-            return null;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM EventTypes", connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<EventType> eventTypes = new List<EventType>();
+                        while (reader.Read())
+                        {
+                            EventType eventType = new EventType((string)reader["Name"], (string)reader["Description"], (double)reader["ExpPerParticipant"]);
+                            eventType.ID = (int)reader["Id"];
+                            eventTypes.Add(eventType);
+                        }
+                        return eventTypes;
+                    }
+                }
+            }
         }
-        public List<Event>? GetEvents()
+        public List<Event>? GetAllEvents()
         {
-            return null;
-        }    
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Events", connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<Event> events = new List<Event>();
+                        while (reader.Read())
+                        {
+                            Coach coach = GetEventCoachByEventID((int)reader["Id"]);
+                            List<Participant> participants = GetEventParticipantsByEventID((int)reader["Id"]);
+                            EventType eventType = GetEvent_EventTypeByEventID((int)reader["Id"]);
+                            Event @event = new Event(coach, (DateTime)reader["Date"], (int)reader["MaxParticipants"]);
+                            @event.ID = (int)reader["Id"];
+                            @event.Participants = participants;
+                            @event.EventType = GetEventTypeByEventId((int)reader["Id"]);
+                            events.Add(@event);
+                        }
+                        return events;
+                    }
+                }
+            }
+        }   
     }
 }

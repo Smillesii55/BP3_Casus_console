@@ -7,8 +7,8 @@ using System.Text;
 
 UserService userService = UserService.Instance;
 FriendService friendService = FriendService.Instance;
+EventService eventService = EventService.Instance;
 
-EventDataAccesLayer eventDataAccesLayer = EventDataAccesLayer.Instance;
 
 // give the user the option to log in or register
 Console.WriteLine("Welcome to the Fitness App!");
@@ -115,7 +115,7 @@ if (CurrentUser.Type == User.UserType.Coach)
         switch (input)
         {
             case "1":
-                //ViewProfile();
+                ViewProfile();
                 break;
             case "2":
                 EditProfile();
@@ -124,16 +124,16 @@ if (CurrentUser.Type == User.UserType.Coach)
                 ViewFriends();
                 break;
             case "4":
-                AddFriend();
+                //AddFriend();
                 break;
             case "5":
-                RemoveFriend();
+                //RemoveFriend();
                 break;
             case "6":
-                ViewEvents();
+                //ViewEvents();
                 break;
             case "7":
-                CreateEvent();
+                //CreateEvent();
                 break;
             case "8":
                 //EditEvent();
@@ -172,7 +172,7 @@ else if (CurrentUser.Type == User.UserType.Participant)
         switch (input)
         {
             case "1":
-                //ViewProfile();
+                ViewProfile();
                 break;
             case "2":
                 EditProfile();
@@ -181,13 +181,13 @@ else if (CurrentUser.Type == User.UserType.Participant)
                 ViewFriends();
                 break;
             case "4":
-                AddFriend();
+                //AddFriend();
                 break;
             case "5":
-                RemoveFriend();
+                //RemoveFriend();
                 break;
             case "6":
-                ViewEvents();
+                //ViewEvents();
                 break;
             case "7":
                 //ParticipateInEvent();
@@ -201,7 +201,8 @@ else if (CurrentUser.Type == User.UserType.Participant)
         }
     }
 }
-/*
+
+
 void ViewProfile()
 {
     UserService userService = UserService.Instance;
@@ -228,14 +229,15 @@ void ViewProfile()
         Console.WriteLine("Event progresses:");
         foreach (EventTypeProgress progress in (userProfile as Participant)?.EventProgresses)
         {
-            Console.WriteLine("Event: " + eventDataAccesLayer.GetEvent_EventTypeByEventID(progress.EventTypeID).Name + ", Level: " + progress.Level + ", Experience: " + progress.Experience);
+            Console.WriteLine("Event: " + eventService.GetEventTypeByID(progress.EventTypeID) + ", Level: " + progress.Level + ". Experience: " + progress.Experience);
         }
     }
     Console.WriteLine();
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
-*/
+
+
 void EditProfile()
 {
     UserService userService = UserService.Instance;
@@ -257,6 +259,7 @@ void EditProfile()
     Console.WriteLine("Profile updated. Press any key to return.");
     Console.ReadKey();
 }
+
 void ViewFriends()
 {
     FriendService friendService = FriendService.Instance;
@@ -282,6 +285,7 @@ void ViewFriends()
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
+/*
 void AddFriend()
 {
     FriendService friendService = FriendService.Instance;
@@ -373,7 +377,7 @@ void ViewEvents()
         }
     }
     */
-
+/*
     Console.WriteLine();
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
@@ -415,7 +419,7 @@ void ParticipateInEvent()
 
 }
 */
-
+/*
 void CreateEvent()
 {
     EventService eventService = EventService.Instance;
