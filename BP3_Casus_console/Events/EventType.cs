@@ -15,7 +15,7 @@ namespace BP3_Casus_console.Events
 
         public double ExpPerParticipant { get; set; }
 
-
+     
         public List<String> Tags { get; set; } = new List<string>();
 
 

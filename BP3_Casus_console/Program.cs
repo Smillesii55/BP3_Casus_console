@@ -298,7 +298,6 @@ void ViewFriendRequest()
     if (answer == "1")
     {
         friendService.AcceptFriendRequest(requestID);
-        //friendService.Friend(CurrentUser.ID);
 
     }
     else if (answer == "2")
@@ -384,16 +383,16 @@ void RemoveFriend()
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
-/*
+
 void ViewEvents()
 {
     EventService eventService = EventService.Instance;
-    //List<Event>? events = eventService.GetEvents();
+    List<Event>? events = eventService.GetAllEvents();
 
     Console.Clear();
     Console.WriteLine("Events");
     Console.WriteLine();
-    /*
+   
     if (events.Count == 0)
     {
         Console.WriteLine("There are no events.");
@@ -402,16 +401,14 @@ void ViewEvents()
     {
         foreach (Event @event in events)
         {
-            Console.WriteLine(@event.Name);
+            Console.WriteLine(@event.EventType.Name);
         }
     }
-    */
-/*
     Console.WriteLine();
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
-/*
+
 void ParticipateInEvent()
 {
     EventService eventService = EventService.Instance;
@@ -422,7 +419,7 @@ void ParticipateInEvent()
     Console.WriteLine();
     Console.Write("Enter the name of the event you want to participate in: ");
     string eventName = Console.ReadLine();
-    Event? @event = eventService.GetEvents().FirstOrDefault(e => e.Name == eventName);
+    Event? @event = eventService.GetAllEvents().FirstOrDefault(e => e.EventType.Name == eventName);
 
     if (@event == null)
     {
@@ -447,8 +444,7 @@ void ParticipateInEvent()
     Console.ReadKey();
 
 }
-*/
-/*
+
 void CreateEvent()
 {
     EventService eventService = EventService.Instance;
@@ -462,18 +458,18 @@ void CreateEvent()
     string description = Console.ReadLine();
     Console.Write("Date (yyyy-MM-dd): ");
     DateTime date = DateTime.Parse(Console.ReadLine());
-    Console.Write("Location: ");
-    string location = Console.ReadLine();
+
     Console.Write("Capacity: ");
     int capacity = int.Parse(Console.ReadLine());
 
-    //Event @event = eventService.CreateEvent(name, description, date, location, capacity);
+    eventService.AddEventType(name, description, capacity);
+    Console.WriteLine();
     Console.WriteLine("Event created.");
     Console.WriteLine();
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
-/*
+
 void EditEvent()
 {
     EventService eventService = EventService.Instance;
@@ -491,16 +487,19 @@ void EditEvent()
     }
     else
     {
-        Console.Write("Name: ");
-        @event.Name = Console.ReadLine();
-        Console.Write("Description: ");
-        @event.Description = Console.ReadLine();
         Console.Write("Date (yyyy-MM-dd): ");
         @event.Date = DateTime.Parse(Console.ReadLine());
-        Console.Write("Location: ");
-        @event.Location = Console.ReadLine();
         Console.Write("Capacity: ");
-        @event.Capacity = int.Parse(Console.ReadLine());
+        @event.MaxParticipants = int.Parse(Console.ReadLine());
+        Console.Write("EventType: ");
+        if (eventService.GetEventTypeByID(int.Parse(Console.ReadLine())) == null)
+        {
+            Console.WriteLine("EventType not found.");
+            return;
+        } else
+        {
+            @event.EventType = eventService.GetEventTypeByID(int.Parse(Console.ReadLine()));
+        }
 
         eventService.UpdateEvent(@event);
         Console.WriteLine("Event updated.");
@@ -510,8 +509,6 @@ void EditEvent()
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
-*/
-/*
 void DeleteEvent()
 {
     EventService eventService = EventService.Instance;
@@ -529,7 +526,7 @@ void DeleteEvent()
     }
     else
     {
-        eventService.DeleteEvent(@event);
+        eventService.RemoveEvent(@event);
         Console.WriteLine("Event deleted.");
     }
 
@@ -537,4 +534,3 @@ void DeleteEvent()
     Console.WriteLine("Press any key to return.");
     Console.ReadKey();
 }
-*/
