@@ -104,7 +104,7 @@ namespace BP3_Casus_console.Events.Service
                 connection.Open();
                 foreach (Participant participant in participants)
                 {
-                    using (SqlCommand command = new SqlCommand("INSERT INTO Participants (EventId, UserId) VALUES (@EventId,@UserId)", connection))
+                    using (SqlCommand command = new SqlCommand("INSERT INTO EventParticipants (EventId, UserId) VALUES (@EventId,@UserId)", connection))
                     {
                         command.Parameters.AddWithValue("@EventId", participant.ID);
                         command.Parameters.AddWithValue("@UserId", participant.ID);
@@ -118,7 +118,7 @@ namespace BP3_Casus_console.Events.Service
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("INSERT INTO Coaches (EventId, UserId) VALUES (@EventId,@UserId)", connection))
+                using (SqlCommand command = new SqlCommand("INSERT INTO EventCoach (EventId, UserId) VALUES (@EventId,@UserId)", connection))
                 {
                     command.Parameters.AddWithValue("@EventId", coach.ID);
                     command.Parameters.AddWithValue("@UserId", coach.ID);
@@ -389,7 +389,7 @@ namespace BP3_Casus_console.Events.Service
                 }
             }
         }
-        public EventType GetEventTypeByName(string eventTypeName)
+        public EventType? GetEventTypeByName(string eventTypeName)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -402,6 +402,7 @@ namespace BP3_Casus_console.Events.Service
                         if (reader.Read())
                         {
                             EventType eventType = new EventType((string)reader["Name"], (string)reader["Description"], (double)reader["ExpPerParticipant"]);
+                            
                             eventType.ID = (int)reader["Id"];
                             return eventType;
                         }

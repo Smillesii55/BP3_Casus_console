@@ -95,5 +95,6 @@ namespace BP3_Casus_console.Events.Service
         {
             return eventDataAccesLayer.GetEventTypeById(id);
         }
+
     }
 }

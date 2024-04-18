@@ -118,20 +118,19 @@ if (CurrentUser.Type == User.UserType.Coach)
                 EditProfile();
                 break;
             case "3":
-                ViewFriends();
-                break;
-            case "4":
                 ViewEvents();
                 break;
-            case "5":
+            case "4":
                 CreateEvent();
                 break;
-            case "6":
+            case "5":
                 EditEvent();
                 break;
-            case "7":
+            case "6":
                 DeleteEvent();
                 break;
+            case "7":
+                return;
             default:
                 Console.WriteLine("Invalid input. Press any key to try again.");
                 Console.ReadKey();
@@ -452,22 +451,37 @@ void CreateEvent()
     Console.Clear();
     Console.WriteLine("Create event");
     Console.WriteLine();
-    Console.Write("Name: ");
-    string name = Console.ReadLine();
-    Console.Write("Description: ");
-    string description = Console.ReadLine();
-    Console.Write("Date (yyyy-MM-dd): ");
-    DateTime date = DateTime.Parse(Console.ReadLine());
-
+    Console.Write("Date (yyyy-MM-dd HH:mm:ss): ");
+    DateTime date = DateTime.Now;
+    try
+    {
+        date = DateTime.Parse(Console.ReadLine());
+    }
+    catch (Exception)
+    {
+        Console.WriteLine("Invalid date format.");
+        Console.ReadKey();
+        return;
+    }
     Console.Write("Capacity: ");
     int capacity = int.Parse(Console.ReadLine());
-
-    eventService.AddEventType(name, description, capacity);
-    Console.WriteLine();
-    Console.WriteLine("Event created.");
-    Console.WriteLine();
-    Console.WriteLine("Press any key to return.");
-    Console.ReadKey();
+    Console.Write("EventType: ");
+    EventType eventType = eventService.GetEventTypeByName(Console.ReadLine());
+    if (eventType == null)
+    {
+        Console.WriteLine("EventType not found.");
+        Console.ReadKey();
+        return;
+    }
+    else
+    {
+        eventService.AddEventOfType((Coach)CurrentUser, date, capacity, eventType);
+        Console.WriteLine();
+        Console.WriteLine("Event created.");
+        Console.WriteLine();
+        Console.WriteLine("Press any key to return.");
+        Console.ReadKey();
+    }
 }
 
 void EditEvent()
